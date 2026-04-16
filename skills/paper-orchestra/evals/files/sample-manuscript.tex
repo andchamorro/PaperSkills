@@ -1,0 +1,58 @@
+% Sample manuscript with potential leakage issues for testing
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage[capitalize]{cleveref}
+
+\begin{document}
+
+\title{TSAM: Temporal SAM for Audio-Visual Segmentation}
+
+% This should be flagged - author names
+\author{John Smith\\
+Stanford University\\
+jsmith@stanford.edu
+\and
+Jane Doe\\
+MIT\\
+jdoe@mit.edu
+}
+
+\maketitle
+
+\begin{abstract}
+We present TSAM, a novel approach for referring audio-visual segmentation. Our method extends the Segment Anything Model with temporal awareness and multimodal prompting capabilities. We achieve state-of-the-art results on the Ref-AVS benchmark.
+\end{abstract}
+
+\section{Introduction}
+
+Video segmentation has seen remarkable progress. In our previous work~\cite{smith2024}, we demonstrated that foundation models can be adapted for temporal tasks.
+
+% This should be flagged - personal GitHub
+Code is available at github.com/johnsmith/tsam
+
+\section{Related Work}
+
+Recent methods have explored audio-visual segmentation. The corresponding author can be reached at jsmith@stanford.edu for questions.
+
+\section{Method}
+
+We build upon SAM~\cite{kirillov2023sam}. Our implementation uses PyTorch.
+
+\section{Experiments}
+
+We evaluate on the Ref-AVS dataset. Training was performed at Stanford AI Lab using 8 A100 GPUs.
+
+% This should be flagged - acknowledgements with funding
+\section*{Acknowledgements}
+This work was supported by NSF Grant IIS-1234567 and a Google Research Award.
+
+\bibliography{refs}
+\bibliographystyle{ieee_fullname}
+
+\end{document}

@@ -1,0 +1,58 @@
+{
+  "skill_name": "paper-orchestra",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Initialize a paper-orchestra desk for my new research project on video segmentation. I want to use the CVPR 2025 template.",
+      "expected_output": "A properly scaffolded desk directory with all required input files (idea.md, log.md, tmpl.md, gl.md) and subdirectories",
+      "files": [],
+      "expectations": [
+        "The desk/inputs/ directory is created",
+        "The desk/inputs/idea.md file exists with template content",
+        "The desk/inputs/log.md file exists with template content",
+        "The desk/inputs/tmpl.md file exists",
+        "The desk/inputs/gl.md file exists",
+        "The scripts/init.py was executed successfully"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Validate my paper-orchestra desk at evals/files/sample-desk/ and tell me what's missing or wrong.",
+      "expected_output": "A validation report identifying any missing or invalid input files",
+      "files": ["evals/files/sample-desk/"],
+      "expectations": [
+        "The scripts/validate.py was executed",
+        "The validation output identifies which required files are present",
+        "The validation output identifies which required files are missing or invalid",
+        "Content length checks are performed"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Generate an outline from my idea.md and log.md files in evals/files/complete-desk/. Just do Step 1 of the pipeline.",
+      "expected_output": "A valid ol.json file with plotting_plan, intro_related_work_plan, and section_plan",
+      "files": ["evals/files/complete-desk/"],
+      "expectations": [
+        "The outline-agent skill is invoked",
+        "The output is valid JSON",
+        "The JSON contains plotting_plan array",
+        "The JSON contains intro_related_work_plan object",
+        "The JSON contains section_plan array",
+        "Each plotting_plan entry has figure_id, plot_type, data_source, aspect_ratio",
+        "Citation hints are provided for datasets and baselines mentioned in log.md"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Check the manuscript at evals/files/sample-manuscript.tex for anti-leakage violations.",
+      "expected_output": "A report of any author-identifying information found in the manuscript",
+      "files": ["evals/files/sample-manuscript.tex"],
+      "expectations": [
+        "The scripts/anti_leakage_check.py was executed",
+        "Email addresses are flagged if present",
+        "Author declarations are flagged if present",
+        "Affiliation patterns are flagged if present"
+      ]
+    }
+  ]
+}

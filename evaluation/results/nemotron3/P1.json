@@ -1,0 +1,16 @@
+{
+  "prompt_id": "P1",
+  "dimension": "D1, D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "init.py exits 0 and creates all 4 required input files",
+    "validate.py exits 0 on complete desk",
+    "Output matches expected directory structure"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Executed: python scripts/init.py --out /tmp/eval-desk-P1 --with-examples; Created desk with 4 input files (idea.md, log.md, tmpl.md, gl.md) and 6 directories (inputs/fig, inputs/ref, fig, drafts, refin, final). Validation: python scripts/validate.py --desk /tmp/eval-desk-P1; All validations passed with content checks.",
+  "model_notes": "Nemotron 3 successfully executed all scripts. init.py created desk structure correctly with examples. validate.py confirmed all 4 required input files with sufficient content (1611 chars idea.md, 1340 chars log.md, 229 chars tmpl.md, 113 chars gl.md). Template had 5 sections. Experimental log contained numeric data.",
+  "tokens_approx": "500"
+}

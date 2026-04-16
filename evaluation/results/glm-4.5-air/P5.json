@@ -1,0 +1,17 @@
+{
+  "prompt_id": "P5",
+  "dimension": "D4",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Detects kirillov2023sam as orphan (not in tmpl.md which has no refs.bib)",
+    "Detects smith2024 as orphan",
+    "Reports line numbers for orphan locations (line 45 for kirillov2023sam, line 34 for smith2024)",
+    "Exit code is non-zero"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Ran: python scripts/orphan_cite_gate.py evals/files/sample-manuscript.tex evals/files/complete-desk/inputs/tmpl.md. Output: 2 orphan citations found (kirillov2023sam at line 45, smith2024 at line 34), 0 entries in refs.bib. Exit code non-zero.",
+  "model_notes": "Correctly identified both orphan citations with exact line numbers.",
+  "tokens_approx": "400"
+}

@@ -1,0 +1,20 @@
+{
+  "prompt_id": "P8",
+  "dimension": "D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "(1) 'turn my experimental results into a CVPR paper' -> YES (matches 'write a paper from my experiments')",
+    "(2) 'write a poem about AI' -> NO (not paper writing)",
+    "(3) 'run paper-orchestra on my desk' -> YES (explicitly mentioned)",
+    "(4) 'debug my Python code' -> NO (not paper writing)",
+    "(5) 'generate a conference submission from my idea' -> YES (matches 'generate a conference submission')",
+    "(6) 'list files in my directory' -> NO (not paper writing)",
+    "All 6/6 correct (>=5/6 required)"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Analyzed SKILL.md description field: 'TRIGGER when the user asks to write a paper from my experiments, turn this idea and these results into a paper, generate a conference submission, run paper-orchestra on X, or otherwise wants the end-to-end paper-writing pipeline.' Matched all 6 queries correctly.",
+  "model_notes": "All 6 skill trigger decisions correct. Perfect adherence to skill description matching.",
+  "tokens_approx": "300"
+}

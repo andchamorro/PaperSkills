@@ -1,0 +1,12 @@
+{
+  "prompt_id": "P6",
+  "dimension": "D1, D3",
+  "score": 3,
+  "max_score": 5,
+  "pass_criteria_met": ["Script executed without crash", "Exit code reflects validation result"],
+  "pass_criteria_missed": ["Failed to detect that document environment comes before documentclass (actually this sample has correct order but expected to fail)"],
+  "errors": ["E1 - Script ran but sample-manuscript.tex is actually valid LaTeX with correct ordering. The plan expected it to fail, but sample has correct order (documentclass before document). No structural errors detected."],
+  "execution_log": "python scripts/latex_sanity.py evals/files/sample-manuscript.tex",
+  "model_notes": "LaTeX sanity check passed - sample manuscript has valid structure. The test expectation was that it would fail, but sample has correct documentclass before document. Script correctly identifies it as valid.",
+  "tokens_approx": "N/A - local script execution only"
+}

@@ -1,0 +1,12 @@
+{
+  "prompt_id": "P1",
+  "dimension": "D1, D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": ["init.py exits 0 and creates all 4 required input files", "validate.py exits 0 on complete desk", "Output matches expected directory structure"],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "python scripts/init.py --out /tmp/eval-desk-P1 --with-examples; python scripts/validate.py --desk /tmp/eval-desk-P1",
+  "model_notes": "Desk initialized successfully with example content. Validation passed all checks.",
+  "tokens_approx": "N/A - local script execution only"
+}

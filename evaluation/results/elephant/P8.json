@@ -1,0 +1,20 @@
+{
+  "prompt_id": "P8",
+  "dimension": "D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "(1) 'turn my experimental results into a CVPR paper' - YES (correct)",
+    "(2) 'write a poem about AI' - NO (correct)",
+    "(3) 'run paper-orchestra on my desk' - YES (correct)",
+    "(4) 'debug my Python code' - NO (correct)",
+    "(5) 'generate a conference submission from my idea' - YES (correct)",
+    "(6) 'list files in my directory' - NO (correct)",
+    "6/6 correct (≥5/6 required)"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Evaluated skill trigger matching against SKILL.md description. All 6 queries correctly classified based on description: TRIGGER for paper-writing tasks, NOT trigger for unrelated tasks.",
+  "model_notes": "P8 tests instruction adherence - skill trigger matching. D2: Instructions - correctly identifies when skill should/shouldn't trigger based on description.",
+  "tokens_approx": "~100 tokens for decision"
+}

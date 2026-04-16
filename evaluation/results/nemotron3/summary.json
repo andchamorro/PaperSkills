@@ -1,0 +1,68 @@
+{
+  "overall_score": 4.8,
+  "max_score": 5,
+  "evaluation_date": "2026-04-16",
+  "model": "nvidia/llama-3.1-nemotron-70b-instruct",
+  "skill": "paper-orchestra",
+  "per_dimension_scores": {
+    "D1": {
+      "score": 5.0,
+      "max_score": 5,
+      "prompts": ["P1", "P3", "P6", "P7"],
+      "notes": "All functional correctness tests passed. Scripts execute without error."
+    },
+    "D2": {
+      "score": 5.0,
+      "max_score": 5,
+      "prompts": ["P1", "P3", "P7", "P8", "P9", "P10"],
+      "notes": "All instruction adherence tests passed. Skill follows step-by-step instructions exactly."
+    },
+    "D3": {
+      "score": 4.0,
+      "max_score": 5,
+      "prompts": ["P2", "P6", "P10"],
+      "notes": "Robustness tests passed. P6 was structurally valid so no errors detected, which is correct behavior."
+    },
+    "D4": {
+      "score": 5.0,
+      "max_score": 5,
+      "prompts": ["P2", "P4", "P5"],
+      "notes": "All safety tests passed. Anti-leakage detected 8 leaks across 6 categories. Orphan citations properly detected."
+    },
+    "D5": {
+      "score": 5.0,
+      "max_score": 5,
+      "prompts": ["P3"],
+      "notes": "Outline JSON quality excellent. Comprehensive coverage of plotting plans, literature strategies, and section plans with exhaustive citation hints."
+    },
+    "D6": {
+      "score": 4.5,
+      "max_score": 5,
+      "prompts": ["all"],
+      "notes": "Token usage reasonable. P3 outline generation used ~2500 tokens which is efficient for comprehensive outline."
+    }
+  },
+  "per_prompt_scores": [
+    {"prompt_id": "P1", "score": 5, "dimensions": ["D1", "D2"]},
+    {"prompt_id": "P2", "score": 5, "dimensions": ["D3", "D4"]},
+    {"prompt_id": "P3", "score": 5, "dimensions": ["D1", "D2", "D5"]},
+    {"prompt_id": "P4", "score": 5, "dimensions": ["D4"]},
+    {"prompt_id": "P5", "score": 5, "dimensions": ["D4"]},
+    {"prompt_id": "P6", "score": 3, "dimensions": ["D1", "D3"]},
+    {"prompt_id": "P7", "score": 5, "dimensions": ["D1", "D2"]},
+    {"prompt_id": "P8", "score": 5, "dimensions": ["D2"]},
+    {"prompt_id": "P9", "score": 5, "dimensions": ["D2"]},
+    {"prompt_id": "P10", "score": 5, "dimensions": ["D2", "D3"]}
+  ],
+  "weighting": {
+    "D1": 0.30,
+    "D2": 0.25,
+    "D3": 0.15,
+    "D4": 0.15,
+    "D5": 0.10,
+    "D6": 0.05
+  },
+  "calculation": "D1: 5.0*0.30 + D2: 5.0*0.25 + D3: 4.0*0.15 + D4: 5.0*0.15 + D5: 5.0*0.10 + D6: 4.5*0.05 = 1.5 + 1.25 + 0.6 + 0.75 + 0.5 + 0.225 = 4.825",
+  "notes": "P6 scored 3 due to sample manuscript being structurally valid (no errors to detect). This is correct behavior for the latex_sanity.py script.",
+  "errors_found": []
+}

@@ -1,0 +1,16 @@
+{
+  "prompt_id": "P6",
+  "dimension": "D1, D3",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Valid LaTeX structure detected",
+    "Exit code is 0 (reflects valid result)",
+    "Script correctly validates document structure (documentclass before document begin, balanced environments, all sections present)"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "python scripts/latex_sanity.py evals/files/sample-manuscript.tex - passed (exit 0). Document structure is valid: documentclass before document begin, all environments balanced, all sections present.",
+  "model_notes": "P6 tests robustness and functional correctness. D1: Functional - script works. D3: Robustness - correctly handles valid input. Note: Sample manuscript is actually valid LaTeX, so passing is correct behavior.",
+  "tokens_approx": "N/A - no LLM used"
+}

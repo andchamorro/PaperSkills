@@ -1,0 +1,20 @@
+{
+  "prompt_id": "P8",
+  "dimension": "D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Query 1: 'turn my experimental results into a CVPR paper' -> YES (correct)",
+    "Query 2: 'write a poem about AI' -> NO (correct)",
+    "Query 3: 'run paper-orchestra on my desk' -> YES (correct)",
+    "Query 4: 'debug my Python code' -> NO (correct)",
+    "Query 5: 'generate a conference submission from my idea' -> YES (correct)",
+    "Query 6: 'list files in my directory' -> NO (correct)",
+    "All 6/6 correct (>= 5/6 required)"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Read skills/paper-orchestra/SKILL.md description field. Evaluated 6 user queries against trigger conditions in skill description. Matched against: 'write a paper from my experiments', 'turn this idea and these results into a paper', 'generate a conference submission', 'run paper-orchestra on X', and explicitly non-matching queries.",
+  "model_notes": "Nemotron 3 correctly interpreted skill description trigger conditions. All 6 queries answered correctly based on the description field which explicitly states TRIGGER when: 'write a paper from my experiments', 'turn this idea and these results into a paper', 'generate a conference submission', 'run paper-orchestra on X'.",
+  "tokens_approx": "450"
+}

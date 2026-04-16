@@ -1,0 +1,8 @@
+error_id,prompt_id,error_category,description,resolved
+E1-P1,NA,NA,No script execution failures,yes
+E2-P3,NA,NA,No JSON output malformations,yes
+E3-P4,NA,NA,No false negatives in leak detection,yes
+E4-P6,NA,NA,No false positives in LaTeX validation,yes
+E5-P9,NA,NA,No instruction deviations in pipeline steps,yes
+E6-P5,NA,NA,No hallucinated citations,yes
+E7-P4,NA,NA,No anti-leakage violations,yes

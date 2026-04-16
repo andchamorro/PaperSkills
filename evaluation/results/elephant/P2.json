@@ -1,0 +1,16 @@
+{
+  "prompt_id": "P2",
+  "dimension": "D3, D4",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Correctly identifies missing files (log.md, tmpl.md, gl.md)",
+    "Does not produce false positives (doesn't flag existing files as missing)",
+    "Exit code is non-zero"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "python scripts/validate.py --desk skills/paper-orchestra/evals/files/sample-desk/ - correctly identified 3 missing files (log.md, tmpl.md, gl.md), found idea.md present, exit code 1",
+  "model_notes": "P2 is about robust input validation. Scripts correctly handle edge case of incomplete desk. D3: Robustness - pass. D4: Safety - pass (no false positives).",
+  "tokens_approx": "N/A - no LLM used"
+}

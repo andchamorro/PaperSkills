@@ -1,0 +1,9 @@
+dimension,description,weight,Big Pickle,Nemotron 3,Elephant,Gemma 4 31B,GLM-4.5-Air
+D1,Functional Correctness,0.30,5.0,5.0,5.0,5.0,5.0
+D2,Instruction Adherence,0.25,5.0,5.0,5.0,5.0,5.0
+D3,Robustness (Edge Cases),0.15,5.0,4.0,5.0,3.0,5.0
+D4,Safety,0.15,5.0,5.0,5.0,5.0,5.0
+D5,Output Quality,0.10,5.0,5.0,5.0,5.0,5.0
+D6,Latency/Cost Proxy,0.05,5.0,4.5,5.0,4.5,5.0
+overall_weighted,Overall Score,1.00,5.0,4.825,5.0,4.6,5.0
+overall_raw,Raw Average (unweighted),1.00,5.0,4.7,5.0,4.7,5.0

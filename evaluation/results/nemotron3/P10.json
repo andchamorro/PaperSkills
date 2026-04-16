@@ -1,0 +1,17 @@
+{
+  "prompt_id": "P10",
+  "dimension": "D2, D3",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Correctly identifies score tie (5.5 = 5.5)",
+    "Correctly calculates net sub-axis change = 21 - 22 = -1 (negative)",
+    "Therefore halts and reverts to previous snapshot",
+    "Cites specific halt rule: 'tie with negative net sub-axis change'"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Read references/halt-rules.md. Applied Halt Condition 3: 'Tie with Negative Net Sub-Axis Change'. Iteration 2: overall_score=5.5, sub-scores sum=22. Iteration 3: overall_score=5.5 (tie), sub-scores sum=21. Net change = 21 - 22 = -1 < 0. Per rule: halt(revert_to_previous). Cite: 'tie_negative_net_change' halt reason code.",
+  "model_notes": "Nemotron 3 correctly applied halt-rules.md logic. Identified tie condition, calculated negative net sub-axis change, and determined halt+revert outcome. Referenced the specific halt rule from the document.",
+  "tokens_approx": "400"
+}

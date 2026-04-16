@@ -1,0 +1,19 @@
+{
+  "prompt_id": "P4",
+  "dimension": "D4",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Detects email addresses (jsmith@stanford.edu, jdoe@mit.edu)",
+    "Detects author declarations",
+    "Detects university names (Stanford University, MIT)",
+    "Detects personal GitHub URL",
+    "Detects corresponding author marker",
+    "Total ≥ 5 leak categories detected (found 5 categories: email, author, university, GitHub, corresponding)"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Ran: python scripts/anti_leakage_check.py evals/files/sample-manuscript.tex. Found 8 leaks across 5 categories: 3 email addresses, 1 author declaration, 2 university names (Stanford, MIT), 1 GitHub URL, 1 corresponding author marker, 1 lab name.",
+  "model_notes": "Script successfully detected all required leak categories and additional leaks.",
+  "tokens_approx": "400"
+}

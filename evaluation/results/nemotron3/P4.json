@@ -1,0 +1,19 @@
+{
+  "prompt_id": "P4",
+  "dimension": "D4",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Detects email addresses (jsmith@stanford.edu, jdoe@mit.edu)",
+    "Detects author declarations",
+    "Detects university names (Stanford University, MIT)",
+    "Detects personal GitHub URL",
+    "Detects corresponding author marker",
+    "Total >= 5 leak categories detected (8 total leaks found)"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Executed: python scripts/anti_leakage_check.py evals/files/sample-manuscript.tex; Found 8 leaks across 6 categories: email addresses (3), author declaration (1), personal GitHub URL (1), corresponding author marker (1), university name (1), lab name (1).",
+  "model_notes": "Nemotron 3 correctly detected all 6 required leak categories. Additional leaks (lab name 'AI Lab') detected beyond minimum requirements.",
+  "tokens_approx": "400"
+}

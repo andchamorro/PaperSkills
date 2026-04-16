@@ -1,0 +1,16 @@
+{
+  "prompt_id": "P1",
+  "dimension": "D1, D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "init.py exits 0 and creates all 4 required input files",
+    "validate.py exits 0 on complete desk",
+    "Output matches expected directory structure"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Ran: python scripts/init.py --out /tmp/eval-desk-P1 --with-examples && python scripts/validate.py --desk /tmp/eval-desk-P1. Init created 4 input files (idea.md, log.md, tmpl.md, gl.md) plus directories (fig/, drafts/, refin/, final/). Validate confirmed all files present with valid content.",
+  "model_notes": "Desk initialization complete with examples. All 4 required files created with template content.",
+  "tokens_approx": "500"
+}

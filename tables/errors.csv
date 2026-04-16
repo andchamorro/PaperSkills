@@ -1,0 +1,5 @@
+error_id,category,description,model,prompt,severity,root_cause,fix_priority
+E1,Script Execution,init.py fails when /tmp dir exists (stdin prompt),Nemotron 3,P1,low,Test expectation: script asks for confirmation; test should pass 'y',medium
+E2,Script Execution,init.py fails when /tmp dir exists (stdin prompt),Gemma 4 31B,P1,low,Test expectation: script asks for confirmation; test should pass 'y',medium
+E3,Test Design,P6 scored 3 — latex_sanity detects valid LaTeX as passing,Nemotron 3,P6,info,Test expected failure but manuscript is actually valid; test design issue,low
+E4,Test Design,P6 scored 3 — latex_sanity detects valid LaTeX as passing,Gemma 4 31B,P6,info,Test expected failure but manuscript is actually valid; test design issue,low

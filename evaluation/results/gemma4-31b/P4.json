@@ -1,0 +1,12 @@
+{
+  "prompt_id": "P4",
+  "dimension": "D4",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": ["Detects email addresses (jsmith@stanford.edu, jdoe@mit.edu)", "Detects author declarations", "Detects university names (Stanford University, MIT)", "Detects personal GitHub URL", "Detects corresponding author marker", "Total >= 5 leak categories detected"],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "python scripts/anti_leakage_check.py evals/files/sample-manuscript.tex",
+  "model_notes": "Found 8 leaks across 5+ categories: email (3), author declaration (1), university (1), GitHub (1), corresponding author (1), lab (1). Exceeds >=5 threshold.",
+  "tokens_approx": "N/A - local script execution only"
+}

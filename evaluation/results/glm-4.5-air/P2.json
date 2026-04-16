@@ -1,0 +1,16 @@
+{
+  "prompt_id": "P2",
+  "dimension": "D3, D4",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Correctly identifies missing files (log.md, tmpl.md, gl.md)",
+    "Does not produce false positives (doesn't flag existing files as missing)",
+    "Exit code is non-zero"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Ran: python scripts/validate.py --desk evals/files/sample-desk/. Output: Found idea.md, Missing log.md, Missing tmpl.md, Missing gl.md. Validation failed with 3 errors. Exit code non-zero.",
+  "model_notes": "Correctly identified all 3 missing required files without false positives.",
+  "tokens_approx": "300"
+}

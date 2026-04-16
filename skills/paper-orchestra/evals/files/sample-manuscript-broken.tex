@@ -1,0 +1,34 @@
+% Broken LaTeX for latex_sanity.py validation testing
+% Intentionally has structural errors to verify latex_sanity.py detection
+
+\documentclass{article}
+\usepackage{amsmath}
+
+\begin{document}
+
+% ERROR 1: document begins before documentclass
+% (latex_sanity.py does not catch this specific ordering issue)
+
+\title{Broken Document}
+\maketitle
+
+\section{Intro}
+This is a test.
+
+% ERROR 2: Unbalanced begin/end environments
+% figure* opened but figure closed
+\begin{figure*}
+  \includegraphics[width=0.5]{fig1.png}
+\end{figure}
+
+% ERROR 3: Missing label for reference
+% As shown in \cref{tab:results}, our method improves.
+
+% ERROR 4: Missing section content
+\section{Broken Section}
+% intentionally empty
+
+\section{Another Section}
+More text here.
+
+\end{document}

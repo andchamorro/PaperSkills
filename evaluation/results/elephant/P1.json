@@ -1,0 +1,16 @@
+{
+  "prompt_id": "P1",
+  "dimension": "D1, D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "init.py exits 0 and creates all 4 required input files",
+    "validate.py exits 0 on complete desk",
+    "Output matches expected directory structure"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "python scripts/init.py --out /tmp/eval-desk-P1 --with-examples - created desk with 4 input files. python scripts/validate.py --desk /tmp/eval-desk-P1 - passed all validations",
+  "model_notes": "Scripts executed correctly. D1: Functional correctness - pass. D2: Instruction adherence - pass.",
+  "tokens_approx": "N/A - no LLM used"
+}

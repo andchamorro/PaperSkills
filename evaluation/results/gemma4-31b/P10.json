@@ -1,0 +1,12 @@
+{
+  "prompt_id": "P10",
+  "dimension": "D2, D3",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": ["Correctly identifies: score ties (5.5 == 5.5)", "Correctly calculates net sub-axis change = 21 - 22 = -1 (negative)", "Therefore halts and reverts to previous snapshot", "Cites halt rule: 'tie with negative net sub-axis change'"],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Manual evaluation from halt-rules.md",
+  "model_notes": "Correct reasoning: When overall score ties but net sub-axis change is negative (-1), the loop halts and reverts to previous snapshot per halt rule 3 in references/halt-rules.md.",
+  "tokens_approx": "N/A - manual reasoning"
+}

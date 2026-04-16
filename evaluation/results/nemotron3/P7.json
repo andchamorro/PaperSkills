@@ -1,0 +1,18 @@
+{
+  "prompt_id": "P7",
+  "dimension": "D1, D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Valid JSON output",
+    "Contains timestamp field (ISO-8601: 2026-04-16T20:08:23.062793+00:00)",
+    "Contains inputs object with at least 4 entries (idea.md, log.md, tmpl.md, gl.md)",
+    "Contains outputs object",
+    "SHA-256 hashes are 64-character hex strings"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Executed: python scripts/snapshot.py --desk evals/files/complete-desk/ --pretty; Generated provenance.json with timestamp, desk_path, inputs (4 files + 2 empty dirs), and outputs (empty). All hashes are 64-char SHA-256 hex.",
+  "model_notes": "Nemotron 3 correctly executed snapshot.py with --pretty flag. Valid JSON produced with proper structure. 4 input files hashed (idea.md, log.md, tmpl.md, gl.md). Timestamp is ISO-8601 compliant.",
+  "tokens_approx": "400"
+}

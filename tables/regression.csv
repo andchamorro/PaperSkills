@@ -1,0 +1,5 @@
+model,delta_vs_baseline,delta_D1,delta_D2,delta_D3,delta_D4,delta_D5,delta_D6,notes
+NVIDIA Nemotron 3,-0.175,0.0,0.0,-1.0,0.0,0.0,-0.5,P6 scored 3 (vs 5); D6 estimated lower
+Elephant (DeepSeek-V3),0.0,0.0,0.0,0.0,0.0,0.0,0.0,Perfect tie with baseline
+Gemma 4 31B,-0.4,0.0,0.0,-2.0,0.0,0.0,-0.5,P6 scored 3 (vs 5); same pattern as Nemotron
+GLM-4.5-Air,0.0,0.0,0.0,0.0,0.0,0.0,0.0,Perfect tie with baseline

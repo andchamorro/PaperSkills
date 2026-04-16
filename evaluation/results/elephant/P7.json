@@ -1,0 +1,18 @@
+{
+  "prompt_id": "P7",
+  "dimension": "D1, D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Valid JSON output",
+    "Contains timestamp field (ISO-8601: 2026-04-16T20:10:29.300068+00:00)",
+    "Contains inputs object with 4 entries (idea.md, log.md, tmpl.md, gl.md)",
+    "Contains outputs object",
+    "SHA-256 hashes are 64-character hex strings (8b162ab..., 0a386b2c..., etc.)"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "python scripts/snapshot.py --desk evals/files/complete-desk/ --pretty - produced valid JSON with timestamp and SHA-256 hashes for 4 input files",
+  "model_notes": "P7 tests functional correctness and instruction adherence. D1: Functional - script works. D2: Instructions - follows expected output format.",
+  "tokens_approx": "N/A - no LLM used"
+}

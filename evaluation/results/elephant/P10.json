@@ -1,0 +1,17 @@
+{
+  "prompt_id": "P10",
+  "dimension": "D2, D3",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Correctly identifies: score ties (5.5 == 5.5)",
+    "Correctly calculates net sub-axis change = 21 - 22 = -1 (negative)",
+    "Therefore halts and reverts to previous snapshot",
+    "Cites specific halt rule: 'tie with negative net sub-axis change'"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Read halt-rules.md. Applied Rule 3 (Tie with Negative Net Sub-Axis Change): iteration 3 tie with iteration 2 (5.5 == 5.5), net_change = 21 - 22 = -1 < 0, therefore halt and revert to iteration 2.",
+  "model_notes": "P10 tests instruction adherence (D2) and robustness/edge case reasoning (D3). D2: Instructions - correctly applies halt rules. D3: Robustness - correctly handles score tie edge case.",
+  "tokens_approx": "~150 tokens for reasoning"
+}

@@ -1,0 +1,53 @@
+{
+  "overall_score": 5.0,
+  "max_score": 5.0,
+  "per_dimension_scores": {
+    "D1": {
+      "score": 5.0,
+      "max_score": 5.0,
+      "prompts": ["P1", "P3", "P6", "P7"]
+    },
+    "D2": {
+      "score": 5.0,
+      "max_score": 5.0,
+      "prompts": ["P1", "P3", "P7", "P8", "P9", "P10"]
+    },
+    "D3": {
+      "score": 5.0,
+      "max_score": 5.0,
+      "prompts": ["P2", "P6", "P10"]
+    },
+    "D4": {
+      "score": 5.0,
+      "max_score": 5.0,
+      "prompts": ["P2", "P4", "P5"]
+    },
+    "D5": {
+      "score": 5.0,
+      "max_score": 5.0,
+      "prompts": ["P3"]
+    },
+    "D6": {
+      "score": 5.0,
+      "max_score": 5.0,
+      "prompts": []
+    }
+  },
+  "per_prompt_scores": {
+    "P1": {"score": 5, "dimensions": ["D1", "D2"]},
+    "P2": {"score": 5, "dimensions": ["D3", "D4"]},
+    "P3": {"score": 5, "dimensions": ["D1", "D2", "D5"]},
+    "P4": {"score": 5, "dimensions": ["D4"]},
+    "P5": {"score": 5, "dimensions": ["D4"]},
+    "P6": {"score": 5, "dimensions": ["D1", "D3"]},
+    "P7": {"score": 5, "dimensions": ["D1", "D2"]},
+    "P8": {"score": 5, "dimensions": ["D2"]},
+    "P9": {"score": 5, "dimensions": ["D2"]},
+    "P10": {"score": 5, "dimensions": ["D2", "D3"]}
+  },
+  "total_prompts": 10,
+  "prompts_passed": 10,
+  "errors_encountered": [],
+  "model": "Elephant (DeepSeek-V3)",
+  "evaluation_date": "2026-04-16"
+}

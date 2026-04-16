@@ -1,0 +1,17 @@
+{
+  "prompt_id": "P5",
+  "dimension": "D4",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Detects kirillov2023sam as orphan (not in tmpl.md which has no refs.bib)",
+    "Detects smith2024 as orphan",
+    "Reports line numbers for orphan locations",
+    "Exit code is non-zero"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Executed: python scripts/orphan_cite_gate.py evals/files/sample-manuscript.tex evals/files/complete-desk/inputs/tmpl.md; Found 2 orphan citations: kirillov2023sam (line 45), smith2024 (line 34). tmpl.md contains no refs.bib entries. Exit code 1.",
+  "model_notes": "Nemotron 3 correctly identified both orphan citations with accurate line numbers. Script properly detected missing BibTeX entries and exited with code 1.",
+  "tokens_approx": "350"
+}

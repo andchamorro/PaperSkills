@@ -1,0 +1,18 @@
+{
+  "prompt_id": "P9",
+  "dimension": "D2",
+  "score": 5,
+  "max_score": 5,
+  "pass_criteria_met": [
+    "Correctly lists all 5 steps in order: (1) Outline, (2) Plotting, (3) Lit Review, (4) Section Writing, (5) Content Refinement",
+    "Identifies parallel execution of Steps 2 and 3",
+    "Correctly states reason: independent artifacts (figures vs intro/refs.bib), Semantic Scholar rate limits",
+    "Step 4 is ONE single call",
+    "Step 5 has max 3 iterations"
+  ],
+  "pass_criteria_missed": [],
+  "errors": [],
+  "execution_log": "Read SKILL.md pipeline section. Verified: Step 1 (outline-agent, 1 call, ol.json), Step 2 (plotting-agent, ~20-30 calls, fig/), Step 3 (literature-review, ~20-30 calls, intro.md+refs.bib), Step 4 (section-writing, 1 call, manuscript.md), Step 5 (content-refinement, ~5-7 calls, final/). Steps 2&3 independent and must run in parallel.",
+  "model_notes": "P9 tests instruction adherence - pipeline sequence. D2: Instructions - correctly identifies all 5 steps, parallel execution, and single call for Step 4.",
+  "tokens_approx": "~200 tokens for analysis"
+}

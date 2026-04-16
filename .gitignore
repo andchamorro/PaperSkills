@@ -1,0 +1,32 @@
+.DS_Store
+.paperskills/
+.env*.local
+.ignore
+
+# Agents
+.agents/
+.claude/
+.opencode/
+skills-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# VSCode
+.vscode/
+*.code-workspace
+

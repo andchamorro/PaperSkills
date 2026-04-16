@@ -80,30 +80,42 @@ This skill implements the PaperOrchestra framework with the following capabiliti
 ## Repo Layout
 
 ```
-paper-orchestra/
-├── SKILL.md                        # Orchestrator skill (this is the entry point)
-├── references/
-│   ├── anti-leakage-prompt.md      # Verbatim from paper App. B
-│   ├── halt-rules.md               # Refinement loop halt conditions
-│   ├── io-contract.md              # Desk layout, input formats, JSON schemas
-│   └── pln.md                     # Pipeline diagram, call budget, step details
-├── scripts/
-│   ├── init.py                     # Scaffold desk directory
-│   ├── validate.py                # Validate (I, E, T, G) inputs
-│   ├── anti_leakage_check.py       # Scan manuscript for author leaks
-│   ├── orphan_cite_gate.py        # Validate citations against refs.bib
-│   ├── latex_sanity.py            # Check LaTeX structure/balance
-│   └── snapshot.py                 # SHA-256 provenance hashes
-├── skills/
-│   ├── outline-agent/              # Step 1 skill
-│   ├── plotting-agent/             # Step 2 skill
-│   ├── literature-review/         # Step 3 skill
-│   ├── section-writing/            # Step 4 skill
-│   └── content-refinement-agent/   # Step 5 skill
-└── evals/
-    ├── evals.json                 # 4 test cases
-    └── files/                     # Test fixtures
+PaperSkills/                          # Repository root
+├── README.md                         # This file
+├── ref.bib                           # PaperOrchestra citation
+├── .gitignore
+│
+├── paper-orchestra/                 # Installable skill (for skills.sh)
+│   ├── SKILL.md                     # Orchestrator entry point
+│   ├── references/
+│   │   ├── anti-leakage-prompt.md   # Verbatim from paper App. B
+│   │   ├── halt-rules.md           # Refinement loop halt conditions
+│   │   ├── io-contract.md          # Desk layout, input formats, JSON schemas
+│   │   └── pln.md                 # Pipeline diagram, call budget, step details
+│   ├── scripts/
+│   │   ├── init.py                 # Scaffold desk directory
+│   │   ├── validate.py             # Validate (I, E, T, G) inputs
+│   │   ├── anti_leakage_check.py   # Scan manuscript for author leaks
+│   │   ├── orphan_cite_gate.py     # Validate citations against refs.bib
+│   │   ├── latex_sanity.py         # Check LaTeX structure/balance
+│   │   └── snapshot.py              # SHA-256 provenance hashes
+│   └── skills/
+│       ├── outline-agent/           # Step 1 skill
+│       ├── plotting-agent/          # Step 2 skill
+│       ├── literature-review/       # Step 3 skill
+│       ├── section-writing/         # Step 4 skill
+│       └── content-refinement-agent/ # Step 5 skill
+│
+├── evaluation/                      # Development-only: eval framework + results
+│   ├── plan.md                     # 10-prompt, 6-dimension methodology
+│   ├── EVALUATION_REPORT.md        # Consolidated results
+│   ├── evals/                      # Test fixtures + prompt definitions
+│   ├── results/                    # Per-model results
+│   ├── tables/                     # CSV tables
+│   └── images/                     # Evaluation figures (scores_heatmap, dimension_radar, regression_delta)
 ```
+
+> **Note:** The `evals/` directory is development-only and not part of the installable skill. The `paper-orchestra/` skill folder is fully self-contained for `skills.sh` installation.
 
 ---
 
@@ -172,6 +184,38 @@ python scripts/snapshot.py --desk desk/ --output desk/provenance.json
 # Verify files match a previous snapshot
 python scripts/snapshot.py --desk desk/ --verify desk/provenance.json
 ```
+
+---
+
+## Evaluation
+
+The skill was evaluated across **5 models** (Big Pickle baseline, NVIDIA Nemotron 3, Elephant / DeepSeek-V3, Gemma 4 31B, GLM-4.5-Air) using **10 prompts** covering 6 dimensions: Functional Correctness, Instruction Adherence, Robustness, Safety, Output Quality, and Latency/Cost Proxy.
+
+### Overall Scores
+
+![Scores Heatmap](images/scores_heatmap.png)
+
+| Model | Overall (weighted) | D1 | D2 | D3 | D4 | D5 | D6 | Passed |
+|-------|:-----------------:|:--:|:--:|:--:|:--:|:--:|:--:|:------:|
+| **Big Pickle (baseline)** | **5.00** | 5.0 | 5.0 | 5.0 | 5.0 | 5.0 | 5.0 | 10/10 |
+| NVIDIA Nemotron 3 | 4.83 | 5.0 | 5.0 | 4.0 | 5.0 | 5.0 | 4.5 | 9/10 |
+| Elephant (DeepSeek-V3) | **5.00** | 5.0 | 5.0 | 5.0 | 5.0 | 5.0 | 5.0 | 10/10 |
+| Gemma 4 31B | 4.60 | 5.0 | 5.0 | 3.0 | 5.0 | 5.0 | 4.5 | 9/10 |
+| GLM-4.5-Air | **5.00** | 5.0 | 5.0 | 5.0 | 5.0 | 5.0 | 5.0 | 10/10 |
+
+### Dimension Radar
+
+![Dimension Radar](images/dimension_radar.png)
+
+All models achieve perfect scores on D1 (Functional Correctness), D2 (Instruction Adherence), D4 (Safety), and D5 (Output Quality). The only variation appears in D3 (Robustness) and D6 (Latency/Cost Proxy), driven by a P6 test design artifact — not genuine skill defects.
+
+### Regression vs Baseline
+
+![Regression Delta](images/regression_delta.png)
+
+Elephant and GLM-4.5-Air achieve a perfect tie with Big Pickle. Nemotron 3 and Gemma 4 31B show minor regressions in D3 only, attributable to the P6 LaTeX sanity test fixture (see `evaluation/evals/files/sample-manuscript-broken.tex`).
+
+Full results: `evaluation/EVALUATION_REPORT.md` | Methodology: `evaluation/plan.md`
 
 ---
 

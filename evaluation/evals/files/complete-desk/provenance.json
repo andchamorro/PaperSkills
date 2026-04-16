@@ -1,6 +1,6 @@
 {
   "timestamp": "2026-04-16T20:12:49.703491+00:00",
-  "desk_path": "/Users/achamorro/Development/Configs/claude/PaperSkills/skills/paper-orchestra/evals/files/complete-desk",
+  "desk_path": "/Users/achamorro/Development/Configs/claude/PaperSkills/evaluation/evals/files/complete-desk",
   "inputs": {
     "inputs/idea.md": "8b162ab577a00f1e62a931b51eda365a133c9c9b2fc059bba840c074df22d6da",
     "inputs/log.md": "0a386b2c5c3a09101feb8ce1dc53ea722846f6463f8f3695e2452aab42066573",

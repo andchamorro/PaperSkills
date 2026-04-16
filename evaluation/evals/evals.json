@@ -15,9 +15,9 @@
     },
     {
       "id": 2,
-      "prompt": "Run: python scripts/validate.py --desk skills/paper-orchestra/evals/files/sample-desk/. Report what is missing and what passes.",
+      "prompt": "Run: python scripts/validate.py --desk evaluation/evals/files/sample-desk/. Report what is missing and what passes.",
       "expected_output": "Validation report identifying missing files",
-      "files": ["skills/paper-orchestra/evals/files/sample-desk/"],
+      "files": ["evaluation/evals/files/sample-desk/"],
       "expectations": [
         "Exit code is non-zero",
         "Correctly identifies missing: log.md, tmpl.md, gl.md",
@@ -27,9 +27,9 @@
     },
     {
       "id": 3,
-      "prompt": "Read skills/paper-orchestra/skills/outline-agent/SKILL.md, skills/paper-orchestra/evals/files/complete-desk/inputs/idea.md, and skills/paper-orchestra/evals/files/complete-desk/inputs/log.md. Generate a valid ol.json and save it to /tmp/eval-ol-P3.json. Validate the JSON has all required keys.",
+      "prompt": "Read skills/paper-orchestra/skills/outline-agent/SKILL.md, evaluation/evals/files/complete-desk/inputs/idea.md, and evaluation/evals/files/complete-desk/inputs/log.md. Generate a valid ol.json and save it to /tmp/eval-ol-P3.json. Validate the JSON has all required keys.",
       "expected_output": "Valid ol.json with plotting_plan, intro_related_work_plan, section_plan",
-      "files": ["skills/paper-orchestra/evals/files/complete-desk/"],
+      "files": ["evaluation/evals/files/complete-desk/"],
       "expectations": [
         "Valid JSON file created at /tmp/eval-ol-P3.json",
         "Contains plotting_plan array with entries having figure_id, plot_type, data_source, aspect_ratio",
@@ -41,9 +41,9 @@
     },
     {
       "id": 4,
-      "prompt": "Run: python scripts/anti_leakage_check.py skills/paper-orchestra/evals/files/sample-manuscript.tex. Report all leaks found.",
+      "prompt": "Run: python scripts/anti_leakage_check.py evaluation/evals/files/sample-manuscript.tex. Report all leaks found.",
       "expected_output": "Report of author-identifying information",
-      "files": ["skills/paper-orchestra/evals/files/sample-manuscript.tex"],
+      "files": ["evaluation/evals/files/sample-manuscript.tex"],
       "expectations": [
         "Detects email addresses (jsmith@stanford.edu, jdoe@mit.edu)",
         "Detects author declaration",
@@ -55,9 +55,9 @@
     },
     {
       "id": 5,
-      "prompt": "Run: python scripts/orphan_cite_gate.py skills/paper-orchestra/evals/files/sample-manuscript.tex skills/paper-orchestra/evals/files/complete-desk/inputs/tmpl.md. Report what orphan citations were found.",
+      "prompt": "Run: python scripts/orphan_cite_gate.py evaluation/evals/files/sample-manuscript.tex evaluation/evals/files/complete-desk/inputs/tmpl.md. Report what orphan citations were found.",
       "expected_output": "List of citations in manuscript not present in tmpl.md (which has no refs)",
-      "files": ["skills/paper-orchestra/evals/files/sample-manuscript.tex"],
+      "files": ["evaluation/evals/files/sample-manuscript.tex"],
       "expectations": [
         "Exit code is non-zero",
         "Detects kirillov2023sam as orphan",
@@ -67,9 +67,9 @@
     },
     {
       "id": 6,
-      "prompt": "Run: python scripts/latex_sanity.py skills/paper-orchestra/evals/files/sample-manuscript-broken.tex. Report whether errors or warnings were found.",
+      "prompt": "Run: python scripts/latex_sanity.py evaluation/evals/files/sample-manuscript-broken.tex. Report whether errors or warnings were found.",
       "expected_output": "LaTeX validation report with errors detected",
-      "files": ["skills/paper-orchestra/evals/files/sample-manuscript-broken.tex"],
+      "files": ["evaluation/evals/files/sample-manuscript-broken.tex"],
       "expectations": [
         "Exit code is non-zero",
         "Detects figure/figure* environment mismatch",
@@ -78,9 +78,9 @@
     },
     {
       "id": 7,
-      "prompt": "Run: python scripts/snapshot.py --desk skills/paper-orchestra/evals/files/complete-desk/ --pretty. Verify the output is valid JSON with timestamp and input hashes.",
+      "prompt": "Run: python scripts/snapshot.py --desk evaluation/evals/files/complete-desk/ --pretty. Verify the output is valid JSON with timestamp and input hashes.",
       "expected_output": "Valid provenance JSON",
-      "files": ["skills/paper-orchestra/evals/files/complete-desk/"],
+      "files": ["evaluation/evals/files/complete-desk/"],
       "expectations": [
         "Valid JSON output",
         "Contains 'timestamp' field (ISO-8601)",

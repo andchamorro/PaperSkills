@@ -159,6 +159,33 @@ All models achieve perfect scores on D1 (Functional Correctness), D2 (Instructio
 ```
 evaluation/
 ├── plan.md                           # Full evaluation methodology
+├── EVALUATION_REPORT.md              # This report
+├── evals/                            # Eval definitions + test fixtures
+│   ├── evals.json                    # 10 prompt definitions
+│   └── files/
+│       ├── complete-desk/inputs/     # Full desk (idea, log, tmpl, gl)
+│       ├── sample-desk/inputs/       # Incomplete desk (idea.md only)
+│       ├── sample-manuscript.tex     # Leaky manuscript (8 leaks)
+│       └── sample-manuscript-broken.tex # Invalid LaTeX (3 errors)
+├── results/
+│   ├── big-pickle/summary.json      # Big Pickle results
+│   ├── nemotron3/                    # Nemotron 3 results
+│   ├── elephant/                     # Elephant results
+│   ├── gemma4-31b/                  # Gemma 4 31B results
+│   └── glm-4.5-air/               # GLM-4.5-Air results
+├── tables/
+│   ├── eval_scores.csv              # Per-prompt, per-model scores
+│   ├── dimension_scores.csv         # Per-dimension, per-model scores
+│   ├── models_summary.csv           # Model-level summary
+│   ├── errors.csv                   # Categorized errors
+│   └── regression.csv               # Delta vs baseline
+└── images/
+    ├── scores_heatmap.png           # Figure 1
+    ├── dimension_radar.png          # Figure 2
+    └── regression_delta.png         # Figure 3
+```
+evaluation/
+├── plan.md                           # Full evaluation methodology
 ├── results/
 │   ├── big-pickle/summary.json      # Big Pickle results
 │   ├── nemotron3/                    # Nemotron 3 results

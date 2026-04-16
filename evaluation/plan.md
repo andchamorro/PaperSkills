@@ -37,7 +37,7 @@ Evaluates the `paper-orchestra` skill across 5 models:
 - Output matches expected directory structure
 
 ### P2: Input Validation — Incomplete Desk (D3, D4)
-**Prompt:** "Run `python scripts/validate.py --desk skills/paper-orchestra/evals/files/sample-desk/` and report what is missing and what passes."
+**Prompt:** "Run `python scripts/validate.py --desk evaluation/evals/files/sample-desk/` and report what is missing and what passes."
 
 **Pass criteria:**
 - Correctly identifies missing files (log.md, tmpl.md, gl.md)
@@ -45,7 +45,7 @@ Evaluates the `paper-orchestra` skill across 5 models:
 - Exit code is non-zero
 
 ### P3: Outline Generation — Step 1 (D1, D2, D5)
-**Prompt:** "You are executing Step 1 of the paper-orchestra pipeline. Read `skills/paper-orchestra/evals/files/complete-desk/inputs/idea.md` and `skills/paper-orchestra/evals/files/complete-desk/inputs/log.md`. Also read `skills/paper-orchestra/skills/outline-agent/SKILL.md`. Generate a valid `ol.json` with all three required keys: `plotting_plan`, `intro_related_work_plan`, and `section_plan`. Save it to `/tmp/eval-ol-P3.json`. Then validate it has the required fields."
+**Prompt:** "You are executing Step 1 of the paper-orchestra pipeline. Read `evaluation/evals/files/complete-desk/inputs/idea.md` and `evaluation/evals/files/complete-desk/inputs/log.md`. Also read `skills/paper-orchestra/skills/outline-agent/SKILL.md`. Generate a valid `ol.json` with all three required keys: `plotting_plan`, `intro_related_work_plan`, and `section_plan`. Save it to `/tmp/eval-ol-P3.json`. Then validate it has the required fields."
 
 **Pass criteria:**
 - Valid JSON output
@@ -55,7 +55,7 @@ Evaluates the `paper-orchestra` skill across 5 models:
 - Citation hints present for datasets and baselines in log.md
 
 ### P4: Anti-Leakage Detection (D4)
-**Prompt:** "Run `python scripts/anti_leakage_check.py skills/paper-orchestra/evals/files/sample-manuscript.tex` and report all leaks found. Which specific patterns were detected?"
+**Prompt:** "Run `python scripts/anti_leakage_check.py evaluation/evals/files/sample-manuscript.tex` and report all leaks found. Which specific patterns were detected?"
 
 **Pass criteria:**
 - Detects email addresses (jsmith@stanford.edu, jdoe@mit.edu)
@@ -66,7 +66,7 @@ Evaluates the `paper-orchestra` skill across 5 models:
 - Total ≥ 5 leak categories detected
 
 ### P5: Citation Gate — Orphan Detection (D4)
-**Prompt:** "Run `python scripts/orphan_cite_gate.py skills/paper-orchestra/evals/files/sample-manuscript.tex skills/paper-orchestra/evals/files/complete-desk/inputs/tmpl.md`. Report what orphan citations were found."
+**Prompt:** "Run `python scripts/orphan_cite_gate.py evaluation/evals/files/sample-manuscript.tex evaluation/evals/files/complete-desk/inputs/tmpl.md`. Report what orphan citations were found."
 
 **Pass criteria:**
 - Detects `kirillov2023sam` as orphan (not in tmpl.md which has no refs.bib)
@@ -75,7 +75,7 @@ Evaluates the `paper-orchestra` skill across 5 models:
 - Exit code is non-zero
 
 ### P6: LaTeX Sanity Check (D1, D3)
-**Prompt:** "Run `python scripts/latex_sanity.py skills/paper-orchestra/evals/files/sample-manuscript.tex`. Report whether the LaTeX structure passes or fails, and why."
+**Prompt:** "Run `python scripts/latex_sanity.py evaluation/evals/files/sample-manuscript.tex`. Report whether the LaTeX structure passes or fails, and why."
 
 **Pass criteria:**
 - Detects that `\\begin{document}` comes before `\\documentclass` OR
@@ -83,7 +83,7 @@ Evaluates the `paper-orchestra` skill across 5 models:
 - Exit code reflects actual validation result
 
 ### P7: Snapshot — Hash Computation (D1, D2)
-**Prompt:** "Run `python scripts/snapshot.py --desk skills/paper-orchestra/evals/files/complete-desk/ --pretty` and verify the output is valid JSON with timestamp and input hashes."
+**Prompt:** "Run `python scripts/snapshot.py --desk evaluation/evals/files/complete-desk/ --pretty` and verify the output is valid JSON with timestamp and input hashes."
 
 **Pass criteria:**
 - Valid JSON output
@@ -162,6 +162,14 @@ Each prompt is scored 0–5:
 ```
 evaluation/
 ├── plan.md                        # This document
+├── EVALUATION_REPORT.md           # Consolidated report
+├── evals/                         # Eval definitions + test fixtures
+│   ├── evals.json                 # 10 prompts × 5 models
+│   └── files/
+│       ├── complete-desk/inputs/   # Full desk fixture (idea, log, tmpl, gl)
+│       ├── sample-desk/inputs/     # Incomplete desk (idea only)
+│       ├── sample-manuscript.tex  # Leaky manuscript (8 leaks)
+│       └── sample-manuscript-broken.tex # Invalid LaTeX (3 errors)
 ├── results/
 │   ├── big-pickle/
 │   │   ├── P1.json ... P10.json  # Per-prompt results

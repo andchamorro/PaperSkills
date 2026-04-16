@@ -142,16 +142,25 @@ def main():
         action="store_true",
         help="Include example content in idea.md and log.md",
     )
+    parser.add_argument(
+        "--yes",
+        "-y",
+        action="store_true",
+        help="Skip confirmation prompt when output directory exists",
+    )
     args = parser.parse_args()
 
     base_path = Path(args.out)
 
     if base_path.exists() and any(base_path.iterdir()):
-        print(f"Warning: {base_path} already exists and is not empty")
-        response = input("Continue anyway? [y/N] ")
-        if response.lower() != "y":
-            print("Aborted.")
-            return
+        if args.yes:
+            print(f"Warning: {base_path} already exists and is not empty — overwriting.")
+        else:
+            print(f"Warning: {base_path} already exists and is not empty")
+            response = input("Continue anyway? [y/N] ")
+            if response.lower() != "y":
+                print("Aborted.")
+                return
 
     print(f"Creating desk structure at: {base_path}")
     create_structure(base_path, DESK_STRUCTURE, args.with_examples)

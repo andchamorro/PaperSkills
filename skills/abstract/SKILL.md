@@ -23,6 +23,24 @@ Generate an abstract for "$ARGUMENTS".
 
 ---
 
+## STEP 0 — RETRIEVE SIMILAR ABSTRACTS (few-shot)
+
+Find 3-5 high-impact abstracts from the same field as few-shot examples. This is the PapervizAgent Retriever→Planner pattern: retrieved examples guide field-appropriate abstract generation.
+
+1. After reading the manuscript (Step 1), extract: title, 5 keywords, discipline.
+2. Run the retrieval script:
+   ```
+   python scripts/find_similar_abstracts.py --field "{discipline}" --keywords "{keywords}" --limit 5
+   ```
+3. The script returns a JSON array with each example's abstract, word count, format (structured/unstructured), and venue.
+4. Use these examples to:
+   - Match the field's abstract conventions (structured vs. unstructured, typical length).
+   - Adopt discipline-appropriate terminology and phrasing patterns.
+   - Calibrate the level of technical detail for the target audience.
+5. If the script returns empty (API failure or no results), proceed without few-shot examples — the built-in format templates are sufficient.
+
+**Fallback:** If Semantic Scholar is unavailable, skip this step entirely. Few-shot examples are optional enrichment.
+
 ## STEP 1 — READ MANUSCRIPT
 
 1. Open the manuscript with the Read tool.

@@ -26,7 +26,8 @@ Main Session — coordination
   ├── STEP 1: Resolve seed papers
   ├── STEP 2: Subagent → build citation network (2-level max)
   ├── STEP 3: Compute network insights
-  └── STEP 4: Report subagent → interactive HTML visualization
+  ├── STEP 4: Report subagent → interactive HTML visualization
+  └── STEP 5: Critic → validate HTML report (max 2 rounds)
 ```
 
 ## STEP 1 — Resolve Seed Papers
@@ -159,9 +160,40 @@ Use this HTML skeleton for the network graph section:
 
 ### 4f. Deliver Report
 
-1. After writing the file, return the exact absolute file path to the user.
-2. Ask whether the user wants it opened.
-3. Only run `open {file_path}` after the user explicitly confirms.
+1. After writing the file, pass the file path to STEP 5 for validation.
+
+## STEP 5 — Critic Validation (max 2 rounds)
+
+Validate the HTML report for completeness and vis.js correctness. Pattern inspired by PapervizAgent's Critic-Visualizer loop (`paperviz_processor.py:60-100`).
+
+1. Run the validation script:
+   ```
+   python scripts/validate_network.py --report {file_path} --seeds "{seed_id_1},{seed_id_2}"
+   ```
+2. Review the JSON output. The script checks:
+   - vis.js CDN loaded
+   - vis.DataSet initialization for nodes and edges
+   - Network container div present
+   - Node and edge data present (>0 each)
+   - All seed papers included in the network
+   - Physics/layout configuration set
+   - Crimson Pro font loaded (design system)
+   - No Tailwind CDN
+   - Click handler for node detail panel
+   - Key papers table present
+   - Cluster/component information present
+
+3. If all checks pass → deliver report to user.
+4. If any checks fail:
+   - Read the `failures` from the script output.
+   - Revise the HTML to fix each failure.
+   - Re-run the validation script.
+   - Max 2 rounds. After 2 rounds, deliver with caveats noting unresolved issues.
+
+5. After validation passes (or max rounds reached):
+   - Return the exact absolute file path to the user.
+   - Ask whether the user wants it opened.
+   - Only run `open {file_path}` after the user explicitly confirms.
 
 ## ERROR HANDLING
 

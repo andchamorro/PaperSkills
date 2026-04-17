@@ -8,6 +8,7 @@
 .claude/
 .opencode/
 skills-lock.json
+TODO.md
 
 # Python
 __pycache__/

@@ -48,7 +48,7 @@
 | `abstract` | **MOVE** | `skills/abstract/` | Remove `name:` frontmatter; update relative paths |
 | `topic-framing` | **MOVE + ENRICH** | `skills/topic-framing/` | Split ~461 lines → orchestrator (~200) + `references/dialogue-protocol.md` + `references/html-template.md`; update asset paths |
 | `lit-search` | **MERGE** | Into `paper-orchestra/skills/literature-review/` | Overlaps with paper-orchestra's Step 3 literature agent. Deprecate standalone, redirect triggers |
-| `cite-verify` | **MERGE** | Into `skills/paper-orchestra/scripts/` | Complements `orphan_cite_gate.py`. Convert to CLI tool, wrap as sub-skill |
+| `cite-verify` | **MERGE** | Into `skills/paper-orchestra/scripts/` | Merged into `citation_tool.py` (unified CLI: orphan-check, verify, smoke-test) |
 | `citation-network` | **MOVE** | `skills/citation-network/` | Move; update asset path references |
 | `journal-match` | **MOVE** | `skills/journal-match/` | Move; update asset path references |
 | `research-gap` | **MOVE + ENRICH** | `skills/research-gap/` | Move; add `scripts/aggregate.py` for OpenAlex trend data |
@@ -102,11 +102,12 @@ All skill-to-skill references are acyclic (routing only, no mutual invocation).
 ## 6. Dependency Graph
 
 ```
-paperskills (orchestrator)
+Self-routing skills (paperskills orchestrator ARCHIVED 2026-04-17)
   ├──► abstract
   ├──► topic-framing ──────────► Semantic Scholar API
-  ├──► lit-search ─────────────► Semantic Scholar, OpenAlex, PubMed, arXiv
-  ├──► cite-verify ───────────► CrossRef, Semantic Scholar, OpenAlex, Unpaywall
+  ├──► literature-review ──────► Semantic Scholar, OpenAlex, PubMed, arXiv  (merged from lit-search)
+  │      └── symlink: skills/literature-review → paper-orchestra/skills/literature-review
+  ├──► citation_tool.py ───────► CrossRef, Semantic Scholar, OpenAlex  (merged from cite-verify + orphan_cite_gate)
   ├──► citation-network ───────► Semantic Scholar, OpenCitations
   ├──► research-gap ───────────► Semantic Scholar, OpenAlex
   ├──► peer-review ────────────► Semantic Scholar, OpenAlex, CrossRef
@@ -114,13 +115,13 @@ paperskills (orchestrator)
   └──► journal-match ──────────► Semantic Scholar, OpenAlex, CrossRef
 
 assets/report-template.md
-  ◄─── cite-verify, citation-network, journal-match,
-         research-gap, peer-review, paper-tracker  (6 skills)
+  ◄─── citation-network, journal-match,
+         research-gap, peer-review, paper-tracker  (5 skills)
 ```
 
 **Single points of failure:** `topic-framing` and `citation-network` depend solely on Semantic Scholar.
 
-**Over-coupled skills (≥3 APIs):** cite-verify (4), lit-search (4), peer-review (3), paper-tracker (3).
+**Over-coupled skills (≥3 APIs):** citation_tool.py (3), literature-review (4), peer-review (3), paper-tracker (3).
 
 **Orphan skills (no dependencies):** `abstract` (pure LLM), `topic-framing` (minimal).
 
@@ -259,12 +260,18 @@ Three skills were drafted with improved structure using skill-creator methodolog
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/research-gap/ .paperskills/paperskills/skills/research-gap/`
 
-### `cite-verify` — MERGE
-- [ ] Source: `.paperskills/paperskills/skills/cite-verify/SKILL.md`
-- [ ] Dest: `skills/paper-orchestra/scripts/cite_verify.py` + `skills/cite-verify/SKILL.md` (wrapper)
-- [ ] Changes: Convert to Python CLI; create wrapper skill; add to shared API utils
-- [ ] Breaking: New CLI `python scripts/cite_verify.py --doi <DOI>`
-- [ ] Rollback: `git checkout HEAD -- skills/paper-orchestra/scripts/cite_verify.py; rm skills/cite-verify/`
+### `cite-verify` — MERGE ✅ DONE (2026-04-17)
+- [x] Source: `.paperskills/paperskills/skills/cite-verify/SKILL.md`
+- [x] Dest: `skills/paper-orchestra/scripts/citation_tool.py` (unified CLI)
+- [x] Changes: Merged cite-verify + orphan_cite_gate.py → unified `citation_tool.py` with 3 subcommands:
+  - `orphan-check` — drop-in replacement for orphan_cite_gate.py (same regex, same output)
+  - `verify` — multi-backend citation resolution (crossref → semanticscholar → openalex, configurable)
+  - `smoke-test` — 4 built-in tests for DOI normalization, BibTeX parsing, regex, backend config
+- [x] Legacy `orphan_cite_gate.py` replaced with forwarding shim
+- [x] Legacy `cite-verify/SKILL.md` archived to `.paperskills/legacy/cite-verify-SKILL.md`
+- [x] All repo references updated to `citation_tool.py orphan-check`
+- [x] Breaking: CLI changed from `orphan_cite_gate.py <args>` to `citation_tool.py orphan-check <args>` (shim provides backwards compat)
+- [x] Rollback: `git checkout HEAD -- skills/paper-orchestra/scripts/orphan_cite_gate.py`
 
 ### `paper-tracker` — MOVE ✅ DONE — IMPROVED ✅ — PAPERVIZAGENT UPGRADED ✅
 - [x] Source: `.paperskills/paperskills/skills/paper-tracker/SKILL.md`
@@ -293,12 +300,19 @@ Three skills were drafted with improved structure using skill-creator methodolog
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/journal-match/ .paperskills/paperskills/skills/journal-match/`
 
-### `lit-search` — MERGE (deprecate standalone)
-- [ ] Source: `.paperskills/paperskills/skills/lit-search/SKILL.md`
-- [ ] Dest: Deprecate; content merged into `paper-orchestra/skills/literature-review/`
-- [ ] Changes: Mark deprecated; redirect triggers; merge API logic
-- [ ] Breaking: `/lit-search` redirect to paper-orchestra
-- [ ] Rollback: Restore archived SKILL.md
+### `lit-search` — MERGE ✅ DONE (2026-04-17)
+- [x] Source: `.paperskills/paperskills/skills/lit-search/SKILL.md` + `skills/lit-search/SKILL.md`
+- [x] Dest: `skills/paper-orchestra/skills/literature-review/SKILL.md` (canonical) + `skills/literature-review/` (symlink)
+- [x] Changes:
+  - Rewrote `literature-review/SKILL.md` merging lit-search's parallel multi-API pattern (4 APIs: SS, OpenAlex, PubMed, arXiv)
+  - Added Phase 1 parallel WebFetch with per-API rate limits and concurrency controls
+  - Added DOI deduplication, citation-count ranking, discipline-based API selection
+  - Added standalone mode (ranked markdown table + next actions) alongside paper-orchestra mode (LaTeX)
+  - Ported `references/api-reference.md` from lit-search to literature-review
+  - Created symlink `skills/literature-review` → `paper-orchestra/skills/literature-review` for top-level discoverability
+  - Replaced `skills/lit-search/SKILL.md` with redirect stub pointing to literature-review
+- [x] Breaking: `lit-search` triggers now redirect to `literature-review`
+- [x] Rollback: `git checkout HEAD -- skills/lit-search/SKILL.md`
 
 ### `peer-review` — RESTRUCTURE ✅ DONE — IMPROVED ✅
 - [x] Source: `.paperskills/paperskills/skills/peer-review/SKILL.md`
@@ -315,12 +329,15 @@ Three skills were drafted with improved structure using skill-creator methodolog
 - [x] Breaking: Pipeline now: Retriever → Evaluator + MissingRefs (parallel) → Reporter → Critic
 - [x] Rollback: `git checkout HEAD -- skills/peer-review/`
 
-### `paperskills` (orchestrator) — DEPRECATE
-- [ ] Source: `.paperskills/paperskills/SKILL.md`
-- [ ] Dest: Archive to `.paperskills/legacy/SKILL.md`
-- [ ] Changes: Deprecation notice; all skills become self-routing
-- [ ] Breaking: `/paperskills` umbrella trigger no longer routes
-- [ ] Rollback: Restore from archive
+### `paperskills` (orchestrator) — DEPRECATE ✅ ARCHIVED (2026-04-17)
+- [x] Source: `.paperskills/paperskills/SKILL.md` + `.paperskills/paperskills/setup`
+- [x] Dest: `.paperskills/legacy/SKILL.md` + `.paperskills/legacy/setup`
+- [x] Changes:
+  - Archived orchestrator SKILL.md with routing table mapping old triggers to new skill locations
+  - Archived setup script with error message if run
+  - Created `.paperskills/legacy/README.md` with contents table and restore instructions
+- [x] Breaking: `/paperskills` umbrella trigger no longer routes — all skills are self-routing
+- [x] Rollback: See `.paperskills/legacy/README.md` for restore commands
 
 ---
 
@@ -399,7 +416,7 @@ git mv skills/shared/report-template.md .paperskills/paperskills/assets/report-t
 
 ```bash
 git checkout HEAD~1 -- skills/lit-search/
-git checkout HEAD~1 -- skills/paper-orchestra/scripts/orphan_cite_gate.py
+git checkout HEAD~1 -- skills/paper-orchestra/scripts/citation_tool.py
 rm -rf skills/topic-framing/references/
 rm -rf skills/research-gap/scripts/
 rm -rf skills/peer-review/skills/

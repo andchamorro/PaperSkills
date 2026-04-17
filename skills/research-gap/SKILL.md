@@ -71,8 +71,10 @@ Launch a subagent with the landscape data from Step 1 and these instructions:
 4. Analyze application gaps: theory without applied studies, method validated in one domain but not others.
 5. Analyze population/context gaps: geographic, demographic, temporal, institutional coverage.
 6. Identify contradictions and unresolved debates.
+7. **Apply Veto Rules:** For each identified gap, check the 5 veto conditions in `references/veto-rules.md`. If any veto fires, force priority to 3 and add `veto_triggered: true` with the veto reason. Vetoed gaps are still reported but flagged as potentially invalid.
 
 For the full gap identification framework, output format, and scoring rubric, read `references/gap-analysis-methodology.md`.
+For veto conditions and failure rules, read `references/veto-rules.md`.
 
 ## Step 3: HTML Report (subagent)
 
@@ -125,3 +127,4 @@ When generating in Chinese: set `<html lang="zh">`, use Chinese headings/labels,
 
 - API endpoints, parameters, fallback chains, fetch helper: `references/api-reference.md`
 - Gap identification framework, scoring rubric, report structure: `references/gap-analysis-methodology.md`
+- Veto Rules for gap claim validation: `references/veto-rules.md`

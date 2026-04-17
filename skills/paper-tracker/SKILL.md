@@ -79,11 +79,31 @@ When the user provides **multiple scope entities**, run one focused query per en
 
 ### Abstract and Metadata Enrichment (within Step 2)
 
-5. For each paper returned, attempt to obtain an abstract:
-   1. Use the OpenAlex abstract if available.
-   2. If missing, query Semantic Scholar by DOI or title. See `references/api-reference.md`.
-   3. If still missing, keep the paper and mark abstract as `Abstract unavailable`.
-6. If a paper is missing a DOI or publication date, query CrossRef by title as a last resort. See `references/api-reference.md`.
+5. For papers that need enrichment (missing abstract, DOI, or publication date), use **batch processing with concurrency control** (PapervizAgent semaphore pattern from `paperviz_processor.py:185-240`):
+
+   **Option A — Script-based batch (recommended for >10 papers):**
+   1. Export papers needing enrichment to a JSON file:
+      ```json
+      [{"doi": "10.1234/...", "title": "..."}, ...]
+      ```
+   2. Run the batch fetch script:
+      ```
+      python scripts/batch_fetch.py --input papers_to_enrich.json --max-concurrent 10 --output enriched.json
+      ```
+   3. The script uses `asyncio.Semaphore(max_concurrent)` to limit parallel API requests:
+      - Tries OpenAlex first (by DOI)
+      - Falls back to Semantic Scholar (by DOI or title search)
+      - Last resort: CrossRef (by DOI)
+   4. Read the enriched JSON output and merge back into the paper list.
+
+   **Option B — Sequential enrichment (for <=10 papers):**
+   1. For each paper, attempt to obtain an abstract:
+      1. Use the OpenAlex abstract if available.
+      2. If missing, query Semantic Scholar by DOI or title. See `references/api-reference.md`.
+      3. If still missing, keep the paper and mark abstract as `Abstract unavailable`.
+   2. If a paper is missing a DOI or publication date, query CrossRef by title as a last resort.
+
+6. If a paper is missing a DOI or publication date after enrichment, keep it with available metadata and note the gap.
 
 ---
 

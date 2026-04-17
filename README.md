@@ -69,7 +69,7 @@ This skill implements the PaperOrchestra framework with the following capabiliti
 
 - **Full five-agent pipeline orchestration** with parallel Step 2 ∥ Step 3 execution and sequential fallback
 - **Anti-leakage enforcement** — all writing agents prepend a strict knowledge-isolation prompt preventing training-data retrieval, author identity insertion, or citation hallucination
-- **Deterministic validation gates** — `orphan_cite_gate.py` verifies every `\cite{key}` exists in `refs.bib`; `latex_sanity.py` checks environment balance and LaTeX structure; `anti_leakage_check.py` scans for author-identifying information
+- **Deterministic validation gates** — `citation_tool.py orphan-check` verifies every `\cite{key}` exists in `refs.bib`; `latex_sanity.py` checks environment balance and LaTeX structure; `anti_leakage_check.py` scans for author-identifying information
 - **Provenance tracking** — SHA-256 hashes of all inputs and outputs via `snapshot.py` for reproducibility
 - **Anti-reward-hacking constraints** — explicit prohibition on stating limitations during refinement
 - **Citation-grounded writing** — Section Writing Agent reads abstracts from `citation_map.json` to write accurate, specific sentences about cited works
@@ -96,7 +96,7 @@ PaperSkills/                          # Repository root
 │   │   ├── init.py                 # Scaffold desk directory
 │   │   ├── validate.py             # Validate (I, E, T, G) inputs
 │   │   ├── anti_leakage_check.py   # Scan manuscript for author leaks
-│   │   ├── orphan_cite_gate.py     # Validate citations against refs.bib
+│   │   ├── citation_tool.py         # Unified citation tool (orphan-check, verify, smoke-test)
 │   │   ├── latex_sanity.py         # Check LaTeX structure/balance
 │   │   └── snapshot.py              # SHA-256 provenance hashes
 │   └── skills/
@@ -160,7 +160,7 @@ python scripts/validate.py --desk my-paper/
 # 4. Invoke the paper-orchestra skill with --desk my-paper/
 
 # 5. Post-pipeline checks
-python scripts/orphan_cite_gate.py my-paper/drafts/manuscript.md my-paper/refs.bib
+python scripts/citation_tool.py orphan-check my-paper/drafts/manuscript.md my-paper/refs.bib
 python scripts/latex_sanity.py my-paper/final/manuscript.md
 python scripts/anti_leakage_check.py my-paper/final/manuscript.md
 python scripts/snapshot.py --desk my-paper/ --pretty
@@ -170,7 +170,7 @@ python scripts/snapshot.py --desk my-paper/ --pretty
 
 ```bash
 # Check all citations are in refs.bib
-python scripts/orphan_cite_gate.py desk/drafts/manuscript.md desk/refs.bib
+python scripts/citation_tool.py orphan-check desk/drafts/manuscript.md desk/refs.bib
 
 # Check LaTeX environment balance
 python scripts/latex_sanity.py desk/final/manuscript.md

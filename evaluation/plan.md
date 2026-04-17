@@ -66,7 +66,7 @@ Evaluates the `paper-orchestra` skill across 5 models:
 - Total ≥ 5 leak categories detected
 
 ### P5: Citation Gate — Orphan Detection (D4)
-**Prompt:** "Run `python scripts/orphan_cite_gate.py evaluation/evals/files/sample-manuscript.tex evaluation/evals/files/complete-desk/inputs/tmpl.md`. Report what orphan citations were found."
+**Prompt:** "Run `python scripts/citation_tool.py orphan-check evaluation/evals/files/sample-manuscript.tex evaluation/evals/files/complete-desk/inputs/tmpl.md`. Report what orphan citations were found."
 
 **Pass criteria:**
 - Detects `kirillov2023sam` as orphan (not in tmpl.md which has no refs.bib)

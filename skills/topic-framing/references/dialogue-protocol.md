@@ -36,7 +36,7 @@ After restatement, ask:
 > C) I have several possible academic angles
 > D) I mostly need help sharpening the title
 
-**Smart-pkip:**
+**Smart-skip:**
 - A → ask all six questions in Phase 2
 - B → focus on Q2-Q6
 - C → collect angles first, then Q2-Q6 on strongest
@@ -56,6 +56,14 @@ After restatement, ask:
 - Recurring empirical pattern without satisfying explanation
 
 **Reject:** answers that only name a field or topic area
+
+**Good answers:**
+- "Advertisers on search platforms face an information asymmetry — they can't observe how the algorithm scores their bids, so they over-invest in broad keywords as a hedge."
+- "There's a tension between open-access mandates and the signaling value of prestige journals for early-career researchers."
+
+**Bad answers:**
+- "I want to study AI." (too broad — just names a field)
+- "Platform advertising is interesting." (no puzzle, just a topic label)
 
 ### Q2: Literature Location
 
@@ -82,6 +90,14 @@ After restatement, ask:
 
 **Reject:** weak "few people studied this" unless user explains why that absence matters
 
+**Good answers:**
+- "Most studies of algorithmic management focus on workers; almost none examine how platform algorithms reshape advertiser decision-making." (empirical gap)
+- "The literature on open access conflates two distinct mechanisms — cost removal and prestige signaling — but hasn't disentangled their effects." (theoretical gap)
+
+**Bad answers:**
+- "Not many people have studied this." (no explanation of why the absence matters)
+- "There's a gap in the research." (empty claim — which gap, specifically?)
+
 ### Q4: Core Contribution
 
 **Ask:** "What should this paper contribute to scholarship? Pick the closest:"
@@ -103,6 +119,14 @@ After restatement, ask:
 
 This is a sanity check — not full method design.
 
+**Good answers:**
+- "I'd analyze advertiser bid histories and keyword portfolios from a search platform dataset (2020-2024)."
+- "Semi-structured interviews with 20-30 early-career researchers who have published under both OA and non-OA models."
+
+**Bad answers:**
+- "I'll look at data." (too vague — what data, from where?)
+- "Maybe surveys or something." (no concrete unit of analysis)
+
 ### Q6: Boundaries of the Claim
 
 **Ask:** "What should this paper explicitly NOT claim, cover, or try to solve?"
@@ -114,11 +138,25 @@ This is a sanity check — not full method design.
 - Level of explanation
 - What causal or normative claim the paper won't make
 
+**Good answers:**
+- "This paper only covers US search platforms 2020-2024; it won't make claims about social media or non-US markets."
+- "I'm not trying to prove causation — just identifying the pattern and testing whether the theoretical mechanism is plausible."
+
+**Bad answers:**
+- "I'll keep it focused." (no specific boundaries stated)
+- "I won't go off-topic." (says nothing about what is excluded)
+
 ---
 
 ### Smart-Skip Rules
 
-If "$ARGUMENTS" or earlier answers already cover a question clearly → skip it
+If "$ARGUMENTS" or earlier answers already cover a question clearly → skip it.
+
+**Example:** If the user's input is "I want to study how search platform algorithms affect advertiser bidding strategy, using Google Ads bid data from 2020-2024", then:
+- Q1 (Research Puzzle): partially covered → ask for the specific tension
+- Q2 (Literature Location): not covered → ask
+- Q5 (Unit of Analysis): already covered (bid data, 2020-2024) → skip
+- Q6 (Boundaries): partially covered (time + platform) → ask only about disciplinary scope
 
 ### Follow-Up Rule
 

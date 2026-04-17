@@ -23,6 +23,27 @@ Recommend target journals for "$ARGUMENTS".
    - **Topic description** (<50 words or non-academic) → ask user for 5-10 keywords and discipline before proceeding.
 2. If the input is ambiguous, ask the user to clarify.
 
+## STEP 0 — RETRIEVE SIMILAR PUBLISHED PAPERS (few-shot)
+
+Find 5-10 high-impact published papers similar to the user's submission to guide journal matching. This is the PapervizAgent Retriever→Planner pattern: retrieved examples provide few-shot context for better recommendations.
+
+1. After reading the manuscript (in Step 1), extract: title, 5 keywords, discipline, methodology.
+2. Search Semantic Scholar for similar highly-cited papers:
+   ```
+   GET https://api.semanticscholar.org/graph/v1/paper/search?query={keywords}&limit=30&fields=title,venue,year,citationCount,authors,abstract
+   ```
+3. Filter results:
+   - Prefer papers from the last 5 years
+   - Prefer papers with >50 citations
+   - Prefer papers with matching methodology type
+4. Select top 5-10 by: `discipline_match * log(citationCount + 1)`
+5. Extract venue distribution from these similar papers — these venues are strong journal candidates.
+6. Pass the similar papers list as few-shot context to Step 2 (similar-papers subagent):
+   - The subagent should prioritize journals where these similar papers were published.
+   - If no similar papers are found, proceed without few-shot examples.
+
+**Fallback:** If Semantic Scholar returns 0 results, broaden to discipline-level keywords. If still empty, skip this step — Step 2 will search independently.
+
 ## STEP 1 — EXTRACT MANUSCRIPT PROFILE
 
 1. Read the manuscript or abstract.
@@ -86,6 +107,7 @@ Recommend target journals for "$ARGUMENTS".
 1. Write a single-file HTML report to: `reports/{date}-journal-match-{slug}.html`
 2. Follow the design system in `skills/shared/report-template.md` exactly. Do NOT use Tailwind CDN.
 3. Use the structural template in `assets/journal-report-template.md` for the journal-specific layout.
+4. Read `references/journal-match-style-guide.md` for tier card styling, scope visualization, and few-shot context display.
 4. The report must include:
 
 ```

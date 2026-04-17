@@ -1,152 +1,176 @@
 ---
-description: Recommend target journals for manuscript submission based on scope, methodology, and impact metrics from Semantic Scholar and OpenAlex. Generates HTML report.
+description: >-
+  Recommend target journals for manuscript submission. Analyzes manuscript scope,
+  discipline, methodology, and language, then searches for similar papers via
+  Semantic Scholar and OpenAlex to identify where comparable work is published.
+  Enriches journal metadata (h-index, OA status, citation metrics) and produces
+  a tiered HTML report ranking journals by scope alignment and impact. Supports
+  bilingual output (English / Chinese). Use when the user provides a manuscript
+  file, abstract, or topic and asks "where should I publish this?", "find
+  matching journals", "journal recommendation", or "venue selection". Do NOT use
+  for citation verification, literature review, paper tracking, reference
+  management, impact factor lookup without a manuscript, or general bibliometric
+  analysis.
 ---
 
 Recommend target journals for "$ARGUMENTS".
 
-Input can be:
-- Manuscript file path → read and analyze
-- Abstract text → use directly
-- Topic description → search based on topic
+## INPUT DETECTION
 
-## MAIN FLOW
+1. Determine input type:
+   - **File path** → read with Read tool, proceed to Step 1.
+   - **Abstract text** (>50 words, contains academic language) → use directly, proceed to Step 1.
+   - **Topic description** (<50 words or non-academic) → ask user for 5-10 keywords and discipline before proceeding.
+2. If the input is ambiguous, ask the user to clarify.
 
-```
-Main Session — coordination
-  │
-  ├── STEP 1: Extract manuscript profile (self)
-  ├── STEP 2: Subagent → find similar papers + analyze venue distribution
-  ├── STEP 3: Enrich journal metadata (self)
-  └── STEP 4: Present ranked recommendations
-```
+## STEP 1 — EXTRACT MANUSCRIPT PROFILE
 
-## STEP 1: Manuscript Profile (self)
+1. Read the manuscript or abstract.
+2. Extract the following fields into a structured profile:
+   - **Discipline**: e.g., law, computer science, medicine, psychology
+   - **Sub-field**: e.g., criminal law theory, NLP, oncology
+   - **Methodology**: theoretical | empirical | mixed | review | meta-analysis
+   - **Scope**: country-specific | comparative | universal
+   - **Length**: estimated word count
+   - **Keywords**: 5-10 key terms
+   - **Language**: English, German, Turkish, Chinese, etc.
+   - **Reference profile**: journals cited in the references (candidate journals)
+3. If the manuscript is too short (<200 words) or yields fewer than 3 keywords, ask the user to supply additional keywords and discipline context.
 
-If file path given, read with Read tool. Extract:
-- **Discipline**: law, CS, medicine, psychology, etc.
-- **Sub-field**: criminal law theory, NLP, oncology, etc.
-- **Methodology**: theoretical, empirical, mixed, review, meta-analysis
-- **Scope**: country-specific, comparative, universal
-- **Length**: word count estimate
-- **Keywords**: 5-10 key terms
-- **Language**: English, German, Turkish, etc.
-- **Reference profile**: what journals do the references cite? (candidate journals)
+## STEP 2 — FIND SIMILAR PAPERS (SUBAGENT)
 
-## STEP 2: Find Similar Papers (subagent)
+1. Launch a subagent with the prompt defined in `references/similar-papers-prompt.md`.
+2. Pass the manuscript profile fields (keywords, discipline, methodology, language) into the prompt template.
+3. The subagent searches Semantic Scholar and OpenAlex for similar papers and returns a venue distribution table. See `references/api-reference.md` for endpoint details.
+4. If the subagent finds **zero** similar papers:
+   - Broaden keyword search (use individual keywords instead of combinations).
+   - Try discipline-level queries (e.g., "criminal law" instead of "criminal law plea bargaining Germany").
+   - If still zero, report the limitation and recommend the user consult a librarian or use Scopus/Web of Science manually.
 
-Launch subagent:
+## STEP 3 — ENRICH JOURNAL DATA
 
-```
-TASK: Find journals where similar research is published.
+1. Take the top 10-15 journals from Step 2.
+2. For each journal, retrieve metadata using the APIs described in `references/api-reference.md`:
+   - OpenAlex Sources → h_index, works_count, cited_by_count, is_oa, homepage_url, issn
+   - CrossRef Journals (if ISSN available) → publication frequency, subject coverage
+3. If a journal is **not found** in OpenAlex:
+   - Try CrossRef lookup by ISSN.
+   - Try name variations (with/without abbreviation).
+   - If still not found, mark as "metadata unavailable" and note in the report.
+4. Optionally run `scripts/venue_enrich.py` for batch enrichment. Export journal names to JSON and invoke:
+   ```
+   python scripts/venue_enrich.py --journals journals.json
+   ```
 
-MANUSCRIPT PROFILE:
-- Keywords: {keywords}
-- Discipline: {discipline}
-- Methodology: {methodology}
-- Language: {language}
+## STEP 4 — SCORE AND RANK
 
-### Semantic Scholar — find similar papers
-For 3 keyword combinations:
-WebFetch: https://api.semanticscholar.org/graph/v1/paper/search?query={keywords}&limit=50&fields=title,venue,year,citationCount,externalIds
-→ Extract venue from each result
+1. For each journal, assign a scope match score (1-5):
+   - **5**: Journal publishes exactly this type of work (discipline + methodology match)
+   - **4**: Close match with minor discipline/scope differences
+   - **3**: Related but broader journal
+   - **2**: Tangentially related
+   - **1**: Poor match
+2. Optionally use `scripts/scope_score.py` for structured scoring:
+   ```
+   python scripts/scope_score.py --profile manuscript_profile.json --journal journal_data.json
+   ```
+3. Sort journals by: scope score (primary), h-index (secondary).
+4. Assign tiers:
+   - **Tier 1 — Best Match**: scope score ≥ 4, strong impact metrics
+   - **Tier 2 — Good Alternative**: scope score 3-4, solid metrics
+   - **Tier 3 — Specialized/Niche**: scope score 2-3, or niche venues with high relevance
+5. If all journals are **closed access**, note this limitation and suggest searching for OA alternatives in the same discipline.
 
-### OpenAlex — venue analysis
-WebFetch: https://api.openalex.org/works?search={keywords}&per_page=50&sort=cited_by_count:desc&mailto=paperskills@example.com
-→ Group by venue, count papers per venue
+## STEP 5 — PRESENT RECOMMENDATIONS
 
-### OpenAlex — journal details for top 15 venues
-WebFetch: https://api.openalex.org/sources?filter=display_name.search:{journal_name}&mailto=paperskills@example.com
-→ Gets: works_count, cited_by_count, h_index, type, is_oa, country
-
-OUTPUT:
-| Journal | Papers Found | Avg Citations | H-Index | OA? | Country | Scope Match (1-5) |
-```
-
-## STEP 3: Enrich Journal Data (self)
-
-For top 10 journals:
-
-### OpenAlex Sources
-```
-WebFetch: https://api.openalex.org/sources/{source_id}?mailto=paperskills@example.com
-→ h_index, works_count, cited_by_count, is_oa, homepage_url, issn
-```
-
-### CrossRef Journals (if ISSN available)
-```
-WebFetch: https://api.crossref.org/journals/{issn}
-→ Publication frequency, subject coverage
-```
-
-## STEP 4: Present Recommendations
-
-Write a single-file HTML report:
-
-`reports/{date}-journal-match-{slug}.html`
+1. Write a single-file HTML report to: `reports/{date}-journal-match-{slug}.html`
+2. Follow the design system in `skills/shared/report-template.md` exactly. Do NOT use Tailwind CDN.
+3. Use the structural template in `assets/journal-report-template.md` for the journal-specific layout.
+4. The report must include:
 
 ```
-## Recommended Journals
+HEADER
+  Report tag: "Journal Recommendations"
+  Title: manuscript title or topic
+  Date: generation date
 
-### Tier 1: Best Match (scope + impact)
-1. **Journal of X** (H-index: 85, OA: Yes)
-   - Scope match: 5/5 — publishes exactly this type of work
-   - Similar papers found: 12 in last 3 years
-   - Notable: published {related paper} closely related to yours
+STATS BAR
+  - Journals analyzed: {count}
+  - Best match tier: "Tier 1" | "Tier 2" | "Tier 3"
+  - Open access: {percentage}%
 
-### Tier 2: Good Alternative
-...
+TIER 1 — BEST MATCH
+  For each journal:
+  - Journal name (linked to homepage)
+  - Scope match: {score}/5 — {one-line reasoning}
+  - H-index: {value} · Works: {count} · OA: Yes/No
+  - Similar papers found: {count} in last 3 years
+  - Notable: "{related paper title}" closely related
 
-### Tier 3: Specialized/Niche
-...
+TIER 2 — GOOD ALTERNATIVE
+  (same card format)
 
-### Language-Specific Options (if non-English manuscript)
-...
+TIER 3 — SPECIALIZED/NICHE
+  (same card format)
+
+LANGUAGE-SPECIFIC OPTIONS (if non-English manuscript)
+  Journals in the manuscript's language with regional impact
+
+METHODOLOGY NOTE (footer)
+  "Recommendations based on venue analysis of similar papers via
+   Semantic Scholar and OpenAlex. Scope scores reflect editorial
+   alignment, not acceptance probability."
 ```
 
-For each journal:
-- Scope alignment explanation
-- Recent similar papers found there
-- Impact metrics (h-index, citation rate)
-- Open access status
-- Homepage URL
+5. After writing the file:
+   - Return the exact absolute file path to the user.
+   - Ask whether they want it opened.
+   - Only run `open {file_path}` after the user explicitly confirms.
 
-After writing the file:
-- Return the exact absolute file path to the user
-- Ask whether they want it opened
-- Only run `open {file_path}` after the user explicitly confirms
+## STEP 6 — NEXT ACTIONS
 
-## STEP 5: Next Actions
-
-- "Format manuscript for a specific journal's guidelines?"
-- "Check if your references match what these journals typically cite?"
-- "Draft a cover letter for one of these?"
+Offer follow-up options:
+1. "Format manuscript for a specific journal's guidelines?"
+2. "Check if your references match what these journals typically cite?"
+3. "Draft a cover letter for one of these?"
 
 ## ERROR HANDLING
-- Manuscript too short: ask for additional keywords/discipline
-- Journal not in OpenAlex: fall back to CrossRef ISSN
-- Non-English journals: less coverage, note limitation
+
+| Condition | Action |
+|---|---|
+| Manuscript too short (<200 words, <3 keywords) | Ask user for keywords, discipline, and methodology |
+| Journal not found in OpenAlex | Try CrossRef by ISSN, then by name variations; mark "metadata unavailable" if all fail |
+| Non-English journals | Note reduced metadata coverage; still include with available data |
+| All journals are closed access | Note limitation; suggest searching for OA alternatives via DOAJ |
+| No similar papers found | Broaden keywords → discipline-level query → report limitation |
+| API rate limit or timeout | Retry once after 5 seconds; if still failing, proceed with partial data and note gaps |
+| Ambiguous input (not clearly manuscript/abstract/topic) | Ask user to clarify input type |
 
 ## TOKEN BUDGET
-- Main: ~5K (profile + presentation)
-- Similar papers subagent: ~15-20K
-- Journal enrichment: ~5-10K
-- Total: ~25-35K
+
+| Component | Estimate |
+|---|---|
+| Main session (profile + presentation) | ~5K |
+| Similar papers subagent | ~15-20K |
+| Journal enrichment | ~5-10K |
+| **Total** | **~25-35K** |
 
 ## LANGUAGE
 
-Determine report language:
-- If the user explicitly requests a language (e.g., "in Chinese", `用中文`): use that language
-- If the manuscript/input is primarily in Chinese: default to Chinese
-- Otherwise: default to English
-
-When generating in Chinese:
-- Set `<html lang="zh">` on the HTML document
-- Write all headings, labels, descriptions, and analysis text in Chinese
-- Keep technical terms in original form (DOI, journal names, API names)
-- Use Chinese punctuation (，。、；：)
-- stat-label text in the stats bar should be Chinese (e.g., "推荐期刊" not "Journals")
-- Badge text should be Chinese (e.g., "最佳匹配" not "BEST MATCH", "开放获取" not "OPEN ACCESS")
+1. Determine report language:
+   - If the user explicitly requests a language (e.g., "in Chinese", "用中文"): use that language.
+   - If the manuscript/input is primarily in Chinese: default to Chinese.
+   - Otherwise: default to English.
+2. When generating in Chinese:
+   - Set `<html lang="zh">` on the HTML document.
+   - Write all headings, labels, descriptions, and analysis text in Chinese.
+   - Keep technical terms in original form (DOI, journal names, API names).
+   - Use Chinese punctuation (，。、；：).
+   - Stat-label text in the stats bar: Chinese (e.g., "推荐期刊" not "Journals").
+   - Badge text: Chinese (e.g., "最佳匹配" not "BEST MATCH", "开放获取" not "OPEN ACCESS").
 
 ## REPORT DESIGN
+
 When writing the HTML report, read and follow the design system in `skills/shared/report-template.md` EXACTLY.
-Do NOT use Tailwind CDN. Use the custom CSS variables, Crimson Pro font, and academic book aesthetic defined there.
+Do NOT use Tailwind CDN. Use the custom CSS variables, font system, and academic book aesthetic defined there.
+For the journal-specific report structure, read `assets/journal-report-template.md`.

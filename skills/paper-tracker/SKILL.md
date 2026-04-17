@@ -1,13 +1,20 @@
 ---
-description: Track newly published papers from specified journals, venues, keywords, authors, institutions, or domains within a time window. Produces a one-shot summary report in Markdown or HTML.
+description: >-
+  Track newly published academic papers by author, institution, journal, venue,
+  keyword, or domain within a specified time window. Produces a one-shot summary
+  report in Markdown or HTML. Use when the user asks to monitor, track, or list
+  recent publications for a person, lab, university, conference, or topic.
+  Do NOT use for full systematic literature reviews, citation network analysis,
+  citation verification, bibliometric mapping, or paper recommendation. Do NOT
+  use when the user already has a specific paper and wants to read or summarize it.
 ---
 
 Track newly published papers for "$ARGUMENTS".
 
 Input may specify:
 - **Time window**: `1 day`, `1 week`, `1 month`, `last 90 days`, or explicit dates such as `2026-01-01 to 2026-03-01`
-- **Scope**: one or more of domain, keywords, journals, venues, authors, institutions
-- **Output**: quick list, HTML report, or markdown report
+- **Scope**: one or more of author, institution, journal/venue, keyword, domain
+- **Output format**: quick list, HTML report, or Markdown report
 
 Examples:
 - `track papers from Nature and Science in the last month`
@@ -17,206 +24,212 @@ Examples:
 ## MAIN FLOW
 
 ```
-Main Session — coordination
+Main Session — coordination (no subagents unless user requests comparative analysis)
   │
-  ├── STEP 1: Normalize tracking request (self)
-  ├── STEP 2: Query primary source by scope (self)
-  ├── STEP 3: Merge, deduplicate, and filter to time window (self)
-  ├── STEP 4: Enrich every matched paper with abstracts / links (self)
-  └── STEP 5: Produce one-shot summary report
+  ├── STEP 1  Normalize tracking request
+  ├── STEP 2  Query primary source by scope type
+  ├── STEP 3  Merge, deduplicate, filter to time window
+  ├── STEP 4  Enrich every matched paper with abstracts / links
+  └── STEP 5  Produce one-shot summary report
 ```
 
-Do NOT use subagents unless the user explicitly asks for broader comparative analysis.
+---
 
-## STEP 1: Normalize Tracking Request
+## STEP 1 — Normalize Tracking Request
 
-Extract:
-- **Window type**: relative (`1 week`) or explicit dates
-- **Date field**: prefer online publication / publication date; if unavailable, use indexed date and state that fallback
-- **Track entities**:
-  - authors
-  - institutions
-  - journals / venues
-  - keywords
-  - domain or discipline
-- **Language**: follow explicit user request; otherwise infer from the prompt
-- **Output format**:
-  - short answer in chat
-  - HTML report
-  - markdown report
+1. Extract the **time window**.
+   - If the user provides a relative window (`1 week`, `last 30 days`), resolve it to explicit `start` / `end` ISO dates.
+   - If the user provides no window, default to the last 30 days and state that assumption.
+2. Classify every **scope entity** into exactly one type:
+   - `author` — a person name
+   - `institution` — a university, lab, or company
+   - `journal` / `venue` — a publication outlet or conference
+   - `keyword` / `domain` — a topic or discipline
+3. Determine the **output format**:
+   - `html` (default) — single-file HTML report
+   - `markdown` — single-file Markdown report
+   - `short` — inline chat answer
+4. Detect the **report language**:
+   - If the user explicitly requests a language (`in Chinese`, `用中文`), use it.
+   - Otherwise infer from the prompt language. Default to English if mixed or unclear.
 
-If the user gives no date window, default to the last 30 days and state that assumption.
+---
 
-## STEP 2: Query Sources
+## STEP 2 — Query Sources by Scope Type
 
-Use **OpenAlex as the primary source** because it supports filters for authors, institutions, sources, concepts, and date ranges.
+Use **OpenAlex** as the primary source. See `references/api-reference.md` for full endpoint details, parameter templates, and fallback APIs.
 
-### OpenAlex — works search
+Follow the decision tree below for each scope entity:
 
-Use the smallest number of focused calls that match the scope. Prefer filters over broad text search.
+1. **If scope is `author`**:
+   1. Search the OpenAlex authors endpoint for the name.
+   2. If multiple candidates are returned, pick the best match by affiliation and publication count; note the ambiguity.
+   3. Query works filtered by the resolved `author.id` and the date window.
+2. **If scope is `institution`**:
+   1. Search the OpenAlex institutions endpoint for the name.
+   2. If multiple candidates are returned, pick the best match by country/type; note the ambiguity.
+   3. Query works filtered by `institutions.id` and the date window.
+3. **If scope is `journal` / `venue`**:
+   1. Search the OpenAlex sources endpoint for the name.
+   2. Query works filtered by `primary_location.source.id` and the date window.
+4. **If scope is `keyword` / `domain`**:
+   1. Query works using full-text search with the keyword and the date window filter.
 
-Examples:
+When the user provides **multiple scope entities**, run one focused query per entity, then merge all result sets in Step 3.
 
-**Author**
-```text
-https://api.openalex.org/authors?search={author_name}&per_page=5&mailto=paperskills@example.com
-https://api.openalex.org/works?filter=author.id:{author_id},from_publication_date:{start},to_publication_date:{end}&sort=publication_date:desc&per_page=50&mailto=paperskills@example.com
-```
+### Abstract and Metadata Enrichment (within Step 2)
 
-**Institution**
-```text
-https://api.openalex.org/institutions?search={institution_name}&per_page=5&mailto=paperskills@example.com
-https://api.openalex.org/works?filter=institutions.id:{institution_id},from_publication_date:{start},to_publication_date:{end}&sort=publication_date:desc&per_page=50&mailto=paperskills@example.com
-```
+5. For each paper returned, attempt to obtain an abstract:
+   1. Use the OpenAlex abstract if available.
+   2. If missing, query Semantic Scholar by DOI or title. See `references/api-reference.md`.
+   3. If still missing, keep the paper and mark abstract as `Abstract unavailable`.
+6. If a paper is missing a DOI or publication date, query CrossRef by title as a last resort. See `references/api-reference.md`.
 
-**Journal / Venue**
-```text
-https://api.openalex.org/sources?search={journal_name}&per_page=5&mailto=paperskills@example.com
-https://api.openalex.org/works?filter=primary_location.source.id:{source_id},from_publication_date:{start},to_publication_date:{end}&sort=publication_date:desc&per_page=50&mailto=paperskills@example.com
-```
+---
 
-**Keyword / Domain**
-```text
-https://api.openalex.org/works?search={query}&filter=from_publication_date:{start},to_publication_date:{end}&sort=publication_date:desc&per_page=50&mailto=paperskills@example.com
-```
+## STEP 3 — Merge, Deduplicate, and Filter
 
-When the user gives multiple scopes, run multiple focused queries and merge them.
+1. Collect all papers from Step 2 into a single list.
+2. Run deduplication. Use `scripts/deduplicate.py` for deterministic DOI normalization and fuzzy title matching:
+   ```
+   cat merged.json | python scripts/deduplicate.py --threshold 0.8
+   ```
+3. Run date-window filtering. Use `scripts/window_filter.py`:
+   ```
+   cat deduped.json | python scripts/window_filter.py --from {start} --to {end}
+   ```
+4. For each surviving paper, record **why it matched** (author, journal, institution, keyword). If a paper matches multiple scopes, keep all reasons.
+5. Sort results by publication date descending. Use citation count only as a secondary tie-breaker.
 
-### Abstract and metadata enrichment
+---
 
-For every matched paper, make a best effort to fetch an abstract.
+## STEP 4 — Build Tracking Summary
 
-Priority:
-1. Use OpenAlex abstract data if available
-2. If OpenAlex lacks a usable abstract, query Semantic Scholar by DOI or title
-3. If still missing, keep the paper and mark abstract as unavailable
+For each paper, collect these fields:
 
-Use Semantic Scholar as the primary fallback:
+| Field             | Required | Fallback                        |
+|-------------------|----------|---------------------------------|
+| title             | yes      | —                               |
+| authors           | yes      | —                               |
+| publication_date  | yes      | indexed date (state fallback)   |
+| journal / venue   | yes      | `Unknown venue`                 |
+| match_reason      | yes      | —                               |
+| doi               | no       | source URL                      |
+| abstract          | no       | `Abstract unavailable`          |
+| abstract_snippet  | no       | first 2-4 sentences of abstract |
+| open_access_url   | no       | —                               |
 
-```text
-https://api.semanticscholar.org/graph/v1/paper/search?query={title_or_doi}&limit=1&fields=title,abstract,authors,year,venue,externalIds,openAccessPdf
-```
+Also compute aggregate statistics:
+- Total papers found
+- Papers grouped by day or week within the window
+- Top journals / venues in the matched set
+- Most frequent authors in the matched set
+- Keyword themes inferred from titles and abstracts
 
-Use Crossref only when the item is missing publication date or DOI metadata:
+---
 
-```text
-https://api.crossref.org/works?query.title={title}&rows=3
-```
+## STEP 5 — Output Report
 
-## STEP 3: Merge and Filter
+### 5a. HTML Report (default)
 
-1. Normalize DOI
-2. Deduplicate by DOI; if DOI missing, fuzzy-match titles
-3. Keep only items inside the requested window
-4. Record **why each paper matched**:
-   - matched author
-   - matched journal
-   - matched institution
-   - matched keyword
-5. If a paper matches multiple scopes, keep all reasons
+1. Read `skills/shared/report-template.md` and follow that design system exactly.
+2. Include the following sections:
+   1. Header with scope description and date range
+   2. Executive summary (total papers, top venue, main themes)
+   3. Stats bar (papers by week, top authors, top venues)
+   4. Paper cards — each card contains: title, authors, date, venue, match reason, DOI link, abstract block
+   5. Thematic observations (2-3 short paragraphs)
+   6. Methodology / coverage note
+3. Write to `reports/{date}-paper-tracker-{slug}.html`.
+4. Return the exact absolute file path to the user.
+5. Ask whether the user wants the file opened. Only run `open {file_path}` after explicit confirmation.
 
-Sort primarily by publication date descending.
-Use citation count only as a secondary tie-breaker.
+### 5b. Markdown Report
 
-## STEP 4: Build Tracking Summary
-
-For each paper keep:
-- title
-- authors
-- publication date
-- journal / venue
-- matched reason
-- DOI
-- abstract
-- 2-4 sentence abstract snippet for summary blocks
-- open access / PDF link if available
-
-Also compute:
-- total papers found
-- papers by day or week in the window
-- top journals / venues in the matched set
-- most frequent authors in the matched set
-- keyword themes inferred from titles / abstracts
-
-## STEP 5: Output Report
-
-Default output is a single-file HTML report. Read `skills/shared/report-template.md` first and follow that design system exactly.
-
-For HTML reports include:
-- header with scope and date range
-- executive summary
-- stats bar
-- paper list or paper cards
-- for each paper: metadata row plus abstract block
-- short thematic observations
-- methodology / coverage note
-
-Suggested filename:
-`reports/{date}-paper-tracker-{slug}.html`
-
-After writing the HTML file:
-- Return the exact absolute file path to the user
-- Ask whether they want it opened
-- Only run `open {file_path}` after the user explicitly confirms
-
-If the user explicitly asks for Markdown, use this structure:
+If the user requests Markdown, use this template:
 
 ```markdown
 # Paper Tracking Report
 
 ## Tracking Scope
-- Window: 2026-02-01 to 2026-02-29
-- Journals: Nature, Science
-- Keywords: large language model safety
+- **Window**: {start} to {end}
+- **Journals**: {list or "—"}
+- **Authors**: {list or "—"}
+- **Institutions**: {list or "—"}
+- **Keywords**: {list or "—"}
 
 ## Executive Summary
-- 14 papers matched
-- Most active venue: Nature Machine Intelligence
-- Main themes: evaluation, alignment, red teaming
+- {N} papers matched
+- Most active venue: {venue}
+- Main themes: {theme_1}, {theme_2}, {theme_3}
 
 ## New Papers
-### 1. Paper Title
-- Date: 2026-02-03
-- Authors: A, B, C
-- Venue: Nature
-- Match Reason: journal + keyword
-- DOI: 10.xxxx/xxxx
-- Abstract: ...
+
+### 1. {Paper Title}
+- **Date**: {publication_date}
+- **Authors**: {author_list}
+- **Venue**: {venue}
+- **Match Reason**: {reason}
+- **DOI**: {doi_or_url}
+- **Abstract**: {abstract_or_unavailable}
+
+<!-- repeat for each paper -->
 
 ## Observations
-- Short trend summary
-- Notable new authors / labs
-- Gaps or caveats in coverage
+- {Trend summary}
+- {Notable new authors or labs}
+- {Gaps or caveats in coverage}
 ```
 
-## LANGUAGE
+Write to `reports/{date}-paper-tracker-{slug}.md`.
 
-Determine report language:
-- If the user explicitly requests a language (for example `in Chinese`, `用中文`): use that language
-- Otherwise infer from the prompt
-- Default to English if mixed or unclear
+### 5c. Chinese-Language Reports
 
-When generating in Chinese:
-- Set `<html lang="zh">`
-- Use Chinese headings and labels
-- Keep journal names, DOI, and API names in original form
-- Use Chinese punctuation
+1. Set `<html lang="zh">` for HTML reports.
+2. Use Chinese headings, labels, and punctuation.
+3. Keep journal names, DOI strings, and API identifiers in their original form.
 
-## COVERAGE RULES
-
-- Treat this as a **freshness-first** task: prioritize newest papers over highly cited historical papers
-- Prefer publication date over citation count
-- State clearly when a result is an early-access / online-first publication
-- If the exact journal / author resolution is ambiguous, show the top candidate and mention the ambiguity
-- If the requested scope resolves to zero results, broaden carefully and explain what changed
+---
 
 ## ERROR HANDLING
 
-- OpenAlex search ambiguity: show the resolved entity before listing papers
-- Missing abstracts: continue, do not block the report; show `Abstract unavailable`
-- Missing DOI: keep the paper with source URL
-- Rate limiting: reduce page size and retry once
-- Sparse metadata across APIs: keep the report factual and note incomplete fields
+### Zero Results for a Scope
+1. Broaden the date window by 2× (e.g., 30 days → 60 days).
+2. If still zero, relax the scope (e.g., search by keyword instead of exact author ID).
+3. Report the broadening to the user and explain what changed.
+
+### Ambiguous Author or Institution Name
+1. Retrieve the top 3-5 candidates from OpenAlex with display name, affiliation, and works count.
+2. Present the candidates to the user and ask for confirmation before proceeding.
+3. If non-interactive context, pick the candidate with the highest works count and note the assumption.
+
+### Rate Limiting
+1. **OpenAlex**: include `mailto=paperskills@example.com` in every request (raises limit to ~10 req/s). If a 429 response is received, back off 2 seconds and retry once.
+2. **Semantic Scholar**: limit to 1 request per second. On 429, wait 5 seconds and retry once.
+3. **CrossRef**: no strict limit, but keep requests ≤5/s.
+
+### Missing Abstracts
+1. Do not block the report. Mark the abstract field as `Abstract unavailable`.
+2. Continue building the summary with the remaining metadata.
+
+### Date Field Unavailable
+1. Prefer `publication_date` from OpenAlex.
+2. If missing, fall back to `created_date` (indexed date) and add a note: `"Date reflects indexing, not publication."`.
+
+### Missing DOI
+1. Keep the paper in the report with its source URL or OpenAlex ID.
+2. Note `DOI unavailable` in the paper card.
+
+---
+
+## COVERAGE RULES
+
+- Treat this as a **freshness-first** task: prioritize newest papers over highly cited historical papers.
+- Prefer publication date over citation count for ordering.
+- State clearly when a result is early-access or online-first.
+- If the exact entity resolution is ambiguous, show the top candidate and mention the ambiguity.
+
+---
 
 ## TOKEN BUDGET
 

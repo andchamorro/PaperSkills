@@ -1,171 +1,227 @@
 ---
-description: Build and visualize citation networks from seed papers using Semantic Scholar and OpenCitations. Generates interactive HTML report with vis.js network graph.
+description: >
+  Build and visualize multi-level citation networks from seed papers (DOIs or titles).
+  Resolves seeds via Semantic Scholar, crawls references and citations to 2 levels,
+  computes centrality metrics, and generates an interactive HTML report with vis.js
+  network graph, timeline view, and cluster analysis. Supports English and Chinese output.
+  Use when the user wants to map a research landscape, find seminal/bridge papers,
+  discover citation clusters, or visualize how papers connect across a field.
+  Do NOT use for simple literature search or reading summaries — use lit-search instead.
+  Do NOT use for verifying a single citation or formatting references — use cite-verify instead.
+  Do NOT use for systematic review or PRISMA workflows — use systematic-review instead.
 ---
 
 Build a citation network from "$ARGUMENTS".
 
-Input can be:
-- One or more DOIs: "10.1038/s41586-023-06221-2"
-- Paper titles: "Attention is All You Need"
-- Mix: "10.1038/... + transformer architecture survey"
+Input formats accepted:
+- One or more DOIs: `"10.1038/s41586-023-06221-2"`
+- Paper titles: `"Attention is All You Need"`
+- Mixed: `"10.1038/... + transformer architecture survey"`
 
-## MAIN FLOW
+## ARCHITECTURE
 
 ```
 Main Session — coordination
   │
-  ├── STEP 1: Resolve seed papers (self)
-  ├── STEP 2: Subagent → fetch references + citations, build network
-  ├── STEP 3: Subagent → identify key nodes + clusters
-  └── STEP 4: Report subagent → HTML visualization with vis.js
+  ├── STEP 1: Resolve seed papers
+  ├── STEP 2: Subagent → build citation network (2-level max)
+  ├── STEP 3: Compute network insights
+  └── STEP 4: Report subagent → interactive HTML visualization
 ```
 
-## STEP 1: Resolve Seed Papers (self)
+## STEP 1 — Resolve Seed Papers
 
-For each input:
+1. Parse `$ARGUMENTS` to extract individual DOIs and/or titles.
+2. For each input, run the seed resolver script:
+   ```
+   python scripts/resolve_seed.py --doi "{doi}"
+   python scripts/resolve_seed.py --title "{title}"
+   ```
+3. If the script fails, attempt manual resolution via WebFetch using the endpoints in `references/api-reference.md`.
+4. For each resolved paper, fetch full data with references and citations:
+   ```
+   WebFetch: https://api.semanticscholar.org/graph/v1/paper/{paperId}?fields=paperId,title,authors,year,venue,citationCount,externalIds,references.paperId,references.title,references.authors,references.year,references.citationCount,references.externalIds,citations.paperId,citations.title,citations.authors,citations.year,citations.citationCount,citations.externalIds
+   ```
+5. Wait ≥1 second between Semantic Scholar API calls.
+6. Collect all seed paper data into a JSON array for STEP 2.
 
-**If DOI:**
-```
-WebFetch: https://api.semanticscholar.org/graph/v1/paper/DOI:{doi}?fields=paperId,title,authors,year,venue,citationCount,references.paperId,references.title,references.authors,references.year,references.citationCount,references.externalIds,citations.paperId,citations.title,citations.authors,citations.year,citations.citationCount,citations.externalIds
-```
+## STEP 2 — Build Network (subagent)
 
-**If title:**
-```
-WebFetch: https://api.semanticscholar.org/graph/v1/paper/search?query={title}&limit=1&fields=paperId,title,authors,year
-```
-Then use paperId for full fetch above.
+1. Launch a subagent with the prompt from `references/network-builder-prompt.md`.
+2. Pass the seed paper JSON from STEP 1 as `{seed_paper_data}`.
+3. The subagent will crawl references and citations, LIMIT to 2 levels from any seed.
+4. The subagent returns a JSON object with `nodes`, `edges`, `clusters`, `key_papers`, `foundational_works`, and `recent_frontier`.
+5. Save the returned JSON to a temporary file for STEP 3.
 
-## STEP 2: Build Network (subagent)
+## STEP 3 — Compute Network Insights
 
-Launch subagent:
+1. Save the subagent's `nodes` and `edges` arrays to temporary JSON files.
+2. Run the network statistics script:
+   ```
+   python scripts/network_stats.py --nodes nodes.json --edges edges.json
+   ```
+3. The script outputs JSON with `key_papers`, `bridges`, `clusters`, `degree_centrality`, and `betweenness_centrality`.
+4. Merge script output with the subagent's cluster and frontier data.
+5. Compile final insights:
+   - **Seminal papers**: highest citation count, referenced by most seeds.
+   - **Bridge papers**: high betweenness centrality, connect different clusters.
+   - **Rising stars**: low total citations but published in last 2 years with growing citation rate.
+   - **Research front**: newest papers citing the seeds.
 
-```
-TASK: Build a citation network from seed papers.
+## STEP 4 — HTML Visualization (report subagent)
 
-SEED PAPERS (with references and citations):
-{data from step 1}
+1. Read the design system from `skills/shared/report-template.md` and follow it EXACTLY.
+2. Do NOT use Tailwind CDN. Use the custom CSS variables, Crimson Pro font, and academic book aesthetic defined in the design system.
+3. Generate the file at: `reports/{YYYY-MM-DD}-citation-network-{topic-slug}.html`
+4. The HTML report MUST include all sections below.
 
-PROCESS:
-1. List each seed's references (backward) and citations (forward)
+### 4a. vis.js Network Graph
 
-2. Find OVERLAP: papers appearing in multiple seeds' lists
-   These are KEY PAPERS in the field.
+Use this HTML skeleton for the network graph section:
 
-3. For top 10 most-connected papers, fetch their refs too (1 level deeper):
-   WebFetch: https://api.semanticscholar.org/graph/v1/paper/{paperId}?fields=title,authors,year,citationCount,references.title,references.citationCount
+```html
+<!-- vis.js CDN -->
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 
-4. Also check OpenCitations for additional links:
-   WebFetch: https://opencitations.net/index/api/v2/citations/{doi}
-   WebFetch: https://opencitations.net/index/api/v2/references/{doi}
+<div id="network-graph" style="width: 100%; height: 600px; border: 1px solid var(--color-border);"></div>
 
-5. Identify clusters:
-   - Methodological (shared methods)
-   - Temporal (foundational vs. recent)
-   - Thematic (shared topic keywords)
+<script>
+  const nodes = new vis.DataSet([
+    // {id: "paperId", label: "Short Title", size: citationCount_scaled, shape: "dot|star",
+    //  color: {background: "cluster_color"}, title: "Full Title (Year)\nAuthors\nCitations: N"}
+  ]);
+  const edges = new vis.DataSet([
+    // {from: "source_id", to: "target_id", arrows: "to"}
+  ]);
+  const container = document.getElementById("network-graph");
+  const data = {nodes: nodes, edges: edges};
+  const options = {
+    physics: {barnesHut: {gravitationalConstant: -3000, springLength: 150}},
+    interaction: {hover: true, tooltipDelay: 100},
+    nodes: {font: {size: 12, face: "Crimson Pro, serif"}},
+    edges: {color: {opacity: 0.4}, smooth: {type: "continuous"}}
+  };
+  const network = new vis.Network(container, data, options);
 
-OUTPUT:
-- Node list: [{id, title, authors, year, citations, role: seed|key|bridge|peripheral}]
-- Edge list: [{source, target, type: cites}]
-- Clusters: [{name, papers, description}]
-- Key papers: top 10 by connectivity
-- Foundational works: highly cited, >10 years old
-- Recent frontier: last 2 years, growing citations
-```
-
-## STEP 3: Insights (self or subagent)
-
-From network data identify:
-- **Seminal papers**: highest citations, referenced by most seeds
-- **Bridge papers**: connect different clusters
-- **Rising stars**: low total but high recent citations
-- **Research front**: newest papers citing seeds
-
-## STEP 4: HTML Visualization (report subagent)
-
-```
-File: reports/{date}-citation-network-{topic}.html
-
-INCLUDES:
-1. Network graph — vis.js (CDN: https://unpkg.com/vis-network/standalone/umd/vis-network.min.js)
-   - Nodes sized by citation count
-   - Colored by cluster
-   - Seed papers highlighted (star shape)
-   - Click node → details panel
-
-2. Timeline view — horizontal, papers as dots on year axis
-   - Connected by citation arrows
-   - Colored by cluster
-
-3. Key Papers table:
-   | # | Title | Authors | Year | Cites | Role | Cluster |
-
-4. Cluster summary cards
-
-5. Statistics:
-   - Total papers in network
-   - Date range
-   - Most prolific authors
-   - Most common venues
-
-After writing the file:
-- Return the exact absolute file path to the user
-- Ask whether they want it opened
-- Only run `open {file_path}` after the user explicitly confirms
+  // Click handler: show details panel
+  network.on("click", function(params) {
+    if (params.nodes.length > 0) {
+      const nodeId = params.nodes[0];
+      const node = nodes.get(nodeId);
+      document.getElementById("detail-panel").innerHTML =
+        "<h3>" + node.fullTitle + "</h3>" +
+        "<p>" + node.authors + " (" + node.year + ")</p>" +
+        "<p>Citations: " + node.citations + "</p>" +
+        "<p>Role: " + node.role + "</p>";
+    }
+  });
+</script>
+<div id="detail-panel" class="card"></div>
 ```
 
-## API REFERENCE
+**Node rendering rules:**
+- Scale node `size` from 10 (min citations) to 50 (max citations), logarithmic.
+- Seed papers: `shape: "star"`, highlighted color.
+- Key papers: `shape: "dot"`, large size.
+- Bridge papers: `shape: "diamond"`.
+- Peripheral papers: `shape: "dot"`, small, muted color.
+- Color nodes by cluster membership.
 
-### Semantic Scholar — Paper + Refs + Citations
-```
-GET /graph/v1/paper/{paperId}?fields=title,authors,year,venue,citationCount,references.title,references.authors,references.year,references.citationCount,references.externalIds,citations.title,citations.authors,citations.year,citations.citationCount,citations.externalIds
+### 4b. Timeline View
 
-paperId formats: DOI:{doi}, PMID:{pmid}, CorpusId:{id}, or S2 paper ID
+- Horizontal axis: publication year.
+- Papers as dots positioned by year, connected by citation arrows.
+- Colored by cluster (same palette as network graph).
+
+### 4c. Key Papers Table
+
+```html
+<table>
+  <thead>
+    <tr><th>#</th><th>Title</th><th>Authors</th><th>Year</th><th>Citations</th><th>Role</th><th>Cluster</th></tr>
+  </thead>
+  <tbody>
+    <!-- Populate from key_papers + bridges -->
+  </tbody>
+</table>
 ```
 
-### Semantic Scholar Batch (efficient)
-```
-POST /graph/v1/paper/batch
-Body: {"ids": ["DOI:10.1...", "DOI:10.2..."]}
-?fields=title,authors,year,citationCount
-Max 500 IDs per request.
-```
+### 4d. Cluster Summary Cards
 
-### OpenCitations COCI
-```
-GET /index/api/v2/citations/{doi}
-GET /index/api/v2/references/{doi}
-Returns: [{citing, cited, creation, timespan}]
-```
+- One card per cluster with name, description, paper count, and top 3 papers.
+
+### 4e. Statistics Bar
+
+- Total papers in network.
+- Date range (earliest year — latest year).
+- Most prolific authors (top 5).
+- Most common venues (top 5).
+
+### 4f. Deliver Report
+
+1. After writing the file, return the exact absolute file path to the user.
+2. Ask whether the user wants it opened.
+3. Only run `open {file_path}` after the user explicitly confirms.
 
 ## ERROR HANDLING
-- Seed not found: try alternative ID types (DOI → title search)
-- >500 citations: note truncation, focus on top-cited
-- vis.js CDN down: fall back to static table
-- Rate limited: smaller batches with delays
-- Circular citations: mark as bidirectional
+
+1. **Seed paper not found in Semantic Scholar:**
+   - First retry with title search if DOI was used (or vice versa).
+   - If still not found, try OpenAlex as fallback: `GET https://api.openalex.org/works/https://doi.org/{doi}`.
+   - If all fail, report which seed could not be resolved and proceed with remaining seeds.
+   - See `references/api-reference.md` for OpenAlex endpoint details.
+
+2. **Paper has >500 citations:**
+   - Truncate to top 200 citations sorted by citation count.
+   - Add a truncation note in the report: "This paper had N citations; showing top 200."
+   - Never attempt to fetch all citations for a paper with >500.
+
+3. **vis.js CDN unavailable:**
+   - Detect load failure with an `onerror` handler on the script tag.
+   - Fall back to a static HTML table listing all nodes and edges.
+   - Add a note: "Interactive graph unavailable — showing static table."
+
+4. **Rate limited by Semantic Scholar (HTTP 429):**
+   - Apply exponential backoff: wait 2s → 4s → 8s → 16s → 32s → 60s max.
+   - After 5 consecutive 429 responses, pause for 60 seconds.
+   - If still blocked after 3 minutes total wait, skip remaining API calls and proceed with data collected so far.
+
+5. **Circular citations (A cites B AND B cites A):**
+   - Mark the edge as `"bidirectional": true` in the edge list.
+   - Render with double-headed arrow in vis.js: `{arrows: "to;from"}`.
+
+6. **Network too large (>300 nodes):**
+   - Prune peripheral nodes (degree 1) that are not seeds.
+   - Keep all seed, key, and bridge nodes.
+   - Note the pruning in the report statistics.
 
 ## TOKEN BUDGET
-- Main: ~5K (seed resolution)
-- Network subagent: ~20-40K
-- Visualization subagent: ~10K
-- Total: ~35-55K
-- LIMIT depth to 2 levels from seed to keep manageable
+
+| Phase | Estimated Tokens |
+|---|---|
+| Main (seed resolution) | ~5K |
+| Network subagent | ~20–40K |
+| Visualization subagent | ~10K |
+| **Total** | **~35–55K** |
+
+LIMIT crawl depth to 2 levels from any seed paper. Do NOT exceed this.
 
 ## LANGUAGE
 
-Determine report language:
-- If the user explicitly requests a language (e.g., "in Chinese", `用中文`): use that language
-- If the manuscript/input is primarily in Chinese: default to Chinese
-- Otherwise: default to English
+1. Determine report language:
+   - If the user explicitly requests a language (e.g., "in Chinese", `用中文`): use that language.
+   - If the manuscript or input is primarily in Chinese: default to Chinese.
+   - Otherwise: default to English.
 
-When generating in Chinese:
-- Set `<html lang="zh">` on the HTML document
-- Write all headings, labels, descriptions, and analysis text in Chinese
-- Keep technical terms in original form (DOI, journal names, API names)
-- Use Chinese punctuation (，。、；：)
-- stat-label text in the stats bar should be Chinese (e.g., "论文数量" not "Papers")
-- Badge text should be Chinese (e.g., "核心论文" not "KEY PAPER", "桥梁论文" not "BRIDGE")
+2. When generating in Chinese:
+   - Set `<html lang="zh">` on the HTML document.
+   - Write all headings, labels, descriptions, and analysis text in Chinese.
+   - Keep technical terms in original form (DOI, journal names, API names).
+   - Use Chinese punctuation (，。、；：).
+   - Stat-label text: Chinese (e.g., "论文数量" not "Papers").
+   - Badge text: Chinese (e.g., "核心论文" not "KEY PAPER", "桥梁论文" not "BRIDGE").
 
 ## REPORT DESIGN
-When writing the HTML report, read and follow the design system in `skills/shared/report-template.md` EXACTLY.
+
+Read and follow the design system in `skills/shared/report-template.md` EXACTLY.
 Do NOT use Tailwind CDN. Use the custom CSS variables, Crimson Pro font, and academic book aesthetic defined there.

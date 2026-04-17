@@ -1,89 +1,167 @@
 ---
-description: Generate abstracts in multiple formats (IMRaD, thematic, extended, short) for academic manuscripts. Supports bilingual output for non-English papers.
+description: >
+  Generate structured and unstructured abstracts (IMRaD, thematic, extended,
+  short, single-paragraph) for academic manuscripts in any discipline. Produces
+  multiple word-count variants (50-75, 150, 250, 500 words) with keyword sets.
+  Supports bilingual output when the manuscript is not in English. Use when the
+  user asks to write, draft, generate, or improve an abstract for a paper,
+  thesis, dissertation, or conference submission. Do NOT use for literature
+  reviews, annotated bibliographies, executive summaries of non-academic
+  documents, book reports, or press releases. Do NOT use when the user wants to
+  summarize a paper for personal reading notes — that is a summarization task,
+  not an abstract.
 ---
 
 Generate an abstract for "$ARGUMENTS".
 
-Resolve file path:
-- Filename only: look in current working directory
-- Full path: use as-is
+## FILE RESOLUTION
 
-Do NOT use subagents — this is a pure LLM task, do it yourself.
+1. If the argument is a filename only, resolve it relative to the current
+   working directory.
+2. If the argument is a full path, use it as-is.
+3. Do NOT use sub-agents — this is a pure LLM task.
 
-## STEP 1: Read Manuscript
+---
 
-Read file with Read tool. Identify:
-- Title
-- Research question / thesis statement
-- Methodology (if applicable)
-- Key arguments / findings
-- Conclusion
+## STEP 1 — READ MANUSCRIPT
 
-## STEP 2: Detect Discipline & Choose Format
+1. Open the manuscript with the Read tool.
+2. If the file is empty or unreadable, **STOP** and report the error
+   (see [Error Handling](#error-handling)).
+3. Extract the following elements:
+   - Title
+   - Research question or thesis statement
+   - Methodology (if applicable)
+   - Key arguments or findings
+   - Conclusion or contribution
+4. If the manuscript contains an existing abstract, save it verbatim for
+   comparison in Step 6.
 
-- **STEM / empirical**: Use IMRaD format (Background, Objective, Methods, Results, Conclusion)
-- **Humanities / law / theoretical**: Use thematic format (Context, Thesis, Approach, Argument, Contribution)
-- If unclear: generate BOTH formats
+## STEP 2 — DETECT DISCIPLINE AND CHOOSE FORMAT
 
-## STEP 3: Generate All Variants
+Examine the manuscript content and determine the discipline:
 
-### A. Structured Abstract (IMRaD — for empirical/science papers)
+| Signal                                  | Classification        |
+|-----------------------------------------|-----------------------|
+| Empirical data, experiments, stats      | **STEM / empirical**  |
+| Argumentation, close reading, theory    | **Humanities / theoretical** |
+| Mixed or unclear                        | **Ambiguous**         |
+
+- **STEM / empirical** → select IMRaD format (Step 3-A).
+- **Humanities / theoretical** → select thematic format (Step 3-B).
+- **Ambiguous** → generate BOTH formats (Steps 3-A and 3-B) and let the
+  user choose.
+
+## STEP 3 — GENERATE VARIANTS
+
+Generate every applicable variant below. After generating each variant, run
+the word-count validation script:
+
+```bash
+python scripts/word_count.py <file> --target <N> --tolerance 20
 ```
-Background: [1-2 sentences]
-Objective: [1 sentence]
-Methods: [1-2 sentences]
-Results: [2-3 sentences]
-Conclusion: [1-2 sentences]
-Keywords: [5-7 terms]
+
+### 3-A. Structured Abstract — IMRaD (~250 words)
+
+Use for STEM / empirical manuscripts.
+
 ```
-~250 words
-
-### B. Structured Abstract (for humanities/theoretical papers)
+Background:    [1-2 sentences]
+Objective:     [1 sentence]
+Methods:       [1-2 sentences]
+Results:       [2-3 sentences]
+Conclusion:    [1-2 sentences]
+Keywords:      [5-7 terms]
 ```
-Context: [1-2 sentences — why this topic matters]
-Thesis: [1 sentence — central argument]
-Approach: [1-2 sentences — methodology, scope, sources]
-Argument: [2-3 sentences — key steps]
-Contribution: [1-2 sentences — what this adds to the field]
-Keywords: [5-7 terms]
+
+### 3-B. Structured Abstract — Thematic (~250 words)
+
+Use for humanities / theoretical manuscripts.
+
 ```
-~250 words
+Context:       [1-2 sentences — why this topic matters]
+Thesis:        [1 sentence — central argument]
+Approach:      [1-2 sentences — methodology, scope, sources]
+Argument:      [2-3 sentences — key reasoning steps]
+Contribution:  [1-2 sentences — what this adds to the field]
+Keywords:      [5-7 terms]
+```
 
-### C. Unstructured Abstract (single paragraph)
-~150 words — concise narrative
+### 3-C. Unstructured Abstract (~150 words)
 
-### D. Extended Abstract
-~500 words — conference submission style
+Single narrative paragraph. No section headings.
 
-### E. Short Abstract
-~50-75 words — for indexing/cataloging
+### 3-D. Extended Abstract (~500 words)
 
-## STEP 4: Bilingual (if applicable)
+Conference-submission style. May include sub-headings.
 
-If manuscript is NOT in English:
-- Generate all variants in original language AND English
-- Label: "Abstract (Original)" / "Abstract (English)"
+### 3-E. Short Abstract (~50-75 words)
 
-## STEP 5: Quality Checks
+Suitable for indexing and cataloging services.
 
-For each abstract verify:
-- [ ] Contains main research question
+## STEP 4 — BILINGUAL OUTPUT (conditional)
+
+**Trigger:** the manuscript is NOT written in English.
+
+1. Generate every variant from Step 3 in the manuscript's original language.
+2. Generate an English translation of each variant.
+3. Label clearly: `Abstract (Original — <language>)` / `Abstract (English)`.
+4. If the manuscript language cannot be identified, **STOP** and ask the user.
+
+## STEP 5 — QUALITY CHECKS
+
+Run the automated quality-check script on each generated abstract:
+
+```bash
+python scripts/quality_check.py <abstract_file> --format imrad|thematic
+```
+
+The script validates:
+- No first-person pronouns (unless a documented discipline norm)
+- No citation patterns (brackets `[1]`, parenthetical `(Author, Year)`)
+- Word count within tolerance of target
+- Standalone readability (heuristic)
+
+Review the JSON output. If any check fails, revise the abstract and re-run
+until all checks pass.
+
+### Manual verification checklist
+
+After the script passes, confirm these semantic criteria:
+
+- [ ] Contains the main research question
 - [ ] States methodology or approach
-- [ ] Mentions key findings/arguments
-- [ ] Does NOT include info not in manuscript
-- [ ] No first person (unless discipline norm)
-- [ ] No citations in abstract
-- [ ] Stands alone — understandable without reading paper
-- [ ] Keywords specific enough for discoverability
+- [ ] Mentions key findings or arguments
+- [ ] Does NOT include information absent from the manuscript
+- [ ] Keywords are specific enough for discoverability
 
-## STEP 6: Present
+## STEP 6 — PRESENT RESULTS
 
-Show all variants with word counts. Ask:
-- "Which format fits your target journal/conference?"
-- "Adjust word count for a specific limit?"
-- "Search keyword usage in literature? (/lit-search {keywords})"
+1. Display every generated variant with its word count.
+2. If the manuscript had an existing abstract, show a side-by-side comparison
+   highlighting differences.
+3. Prompt the user:
+   - "Which format fits your target journal or conference?"
+   - "Need a specific word-count limit?"
+   - "Search keyword usage in the literature? (`/lit-search {keywords}`)"
+
+---
+
+## ERROR HANDLING
+
+| Condition                              | Action                                                        |
+|----------------------------------------|---------------------------------------------------------------|
+| File is empty or unreadable            | Report: "The file could not be read or is empty." **STOP.**   |
+| Manuscript < 500 words                 | Warn: "Manuscript is very short (<500 words). The abstract may lack detail." Proceed but flag output as provisional. |
+| Ambiguous discipline                   | Generate BOTH IMRaD and thematic variants (see Step 2).       |
+| Non-UTF-8 encoding detected            | Attempt re-read with Latin-1 fallback. If still unreadable, ask user for encoding. |
+| Unrecognized manuscript language        | Ask user to confirm the language before generating bilingual output. |
+| quality_check.py reports failures       | Revise the failing abstract and re-run. Max 3 revision cycles; then present best effort with caveats. |
+
+---
 
 ## NOTES
-- No API calls needed
-- If manuscript has existing abstract: show COMPARISON of what's different
-- Total tokens: ~10-20K depending on manuscript length
+
+- No external API calls required.
+- Total token budget: ~10-20 K depending on manuscript length.
+- All script paths are relative to the skill directory (`scripts/`).

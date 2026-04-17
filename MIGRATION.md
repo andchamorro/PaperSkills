@@ -241,19 +241,21 @@ Three skills were drafted with improved structure using skill-creator methodolog
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/abstract/ .paperskills/paperskills/skills/abstract/`
 
-### `topic-framing` — MOVE + ENRICH
-- [ ] Source: `.paperskills/paperskills/skills/topic-framing/`
-- [ ] Dest: `skills/topic-framing/` + `references/` + `evals/`
-- [ ] Changes: Remove `name:`; split into orchestrator + references; update asset path; add input validation; add OpenAlex fallback
-- [ ] Breaking: New bilingual default behavior
-- [ ] Rollback: `git mv skills/topic-framing/ .paperskills/paperskills/skills/topic-framing/`
+### `topic-framing` — MOVE + ENRICH ✅ DONE — IMPROVED ✅
+- [x] Source: `.paperskills/paperskills/skills/topic-framing/`
+- [x] Dest: `skills/topic-framing/` + `references/` + `scripts/` + `evals/`
+- [x] Changes: Remove `name:`; split into orchestrator (134 lines) + `references/dialogue-protocol.md` + `references/html-template.md` + `evals/`; add input validation; add OpenAlex fallback
+- [x] Improved: Trigger-optimized description (412 chars, negative triggers), Step 1-6 numbering with imperative verbs, 8-row error handling table, `scripts/slugify.py` (English + Chinese), dialogue-protocol enriched with 10 good/bad examples, html-template Chinese variant guidance (heading translations, CJK CSS)
+- [x] Breaking: None
+- [x] Rollback: `git mv skills/topic-framing/ .paperskills/paperskills/skills/topic-framing/`
 
-### `research-gap` — MOVE + ENRICH
-- [ ] Source: `.paperskills/paperskills/skills/research-gap/SKILL.md`
-- [ ] Dest: `skills/research-gap/`
-- [ ] Changes: Remove `name:`; add `scripts/aggregate.py`; use shared API utils
-- [ ] Breaking: New `--output-format` option
-- [ ] Rollback: `git mv skills/research-gap/ .paperskills/paperskills/skills/research-gap/`
+### `research-gap` — MOVE + ENRICH ✅ DONE — IMPROVED ✅
+- [x] Source: `.paperskills/paperskills/skills/research-gap/SKILL.md`
+- [x] Dest: `skills/research-gap/` + `references/` + `scripts/` + `evals/`
+- [x] Changes: Remove `name:`; split into orchestrator (127 lines) + `references/api-reference.md` + `references/gap-analysis-methodology.md` + `scripts/aggregate.py` + `evals/`
+- [x] Improved: Trigger-optimized description (negative triggers), Step 1-4 numbering with imperative verbs, 10-row error handling table, token budget tracking Step 4, `aggregate.py` enhanced (--format json|text|html, --per-page, 429 backoff), api-reference rate limit section + fetch helper template, gap-analysis-methodology scoring rubric (Impact x Feasibility) + 6 concrete gap examples + prescriptive HTML class names
+- [x] Breaking: None
+- [x] Rollback: `git mv skills/research-gap/ .paperskills/paperskills/skills/research-gap/`
 
 ### `cite-verify` — MERGE
 - [ ] Source: `.paperskills/paperskills/skills/cite-verify/SKILL.md`

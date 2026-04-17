@@ -233,11 +233,12 @@ Three skills were drafted with improved structure using skill-creator methodolog
 
 ## 10. Per-Skill Checklist
 
-### `abstract` — MOVE ✅ DONE — IMPROVED ✅
+### `abstract` — MOVE ✅ DONE — IMPROVED ✅ — PAPERVIZAGENT UPGRADED ✅
 - [x] Source: `.paperskills/paperskills/skills/abstract/SKILL.md`
 - [x] Dest: `skills/abstract/SKILL.md`
 - [x] Changes: Remove `name:` frontmatter; update relative paths
 - [x] Improved: Pushy description, numbered imperative steps, scripts/word_count.py, scripts/quality_check.py, error handling section
+- [x] PapervizAgent upgrade: Added STEP 0 Retriever→Planner few-shot — `scripts/find_similar_abstracts.py` finds 3-5 published abstracts from the same field via Semantic Scholar; used to match field conventions, terminology, and detail level
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/abstract/ .paperskills/paperskills/skills/abstract/`
 
@@ -249,11 +250,12 @@ Three skills were drafted with improved structure using skill-creator methodolog
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/topic-framing/ .paperskills/paperskills/skills/topic-framing/`
 
-### `research-gap` — MOVE + ENRICH ✅ DONE — IMPROVED ✅
+### `research-gap` — MOVE + ENRICH ✅ DONE — IMPROVED ✅ — PAPERVIZAGENT UPGRADED ✅
 - [x] Source: `.paperskills/paperskills/skills/research-gap/SKILL.md`
 - [x] Dest: `skills/research-gap/` + `references/` + `scripts/` + `evals/`
 - [x] Changes: Remove `name:`; split into orchestrator (127 lines) + `references/api-reference.md` + `references/gap-analysis-methodology.md` + `scripts/aggregate.py` + `evals/`
 - [x] Improved: Trigger-optimized description (negative triggers), Step 1-4 numbering with imperative verbs, 10-row error handling table, token budget tracking Step 4, `aggregate.py` enhanced (--format json|text|html, --per-page, 429 backoff), api-reference rate limit section + fetch helper template, gap-analysis-methodology scoring rubric (Impact x Feasibility) + 6 concrete gap examples + prescriptive HTML class names
+- [x] PapervizAgent upgrade: Added `references/veto-rules.md` with 5 Veto Rules for gap claims (unsupported gap, premature temporal, unanchored methodological, trivial thematic, overgeneralized population). Step 2 now applies veto checks before assigning priority — vetoed gaps forced to Priority 3
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/research-gap/ .paperskills/paperskills/skills/research-gap/`
 
@@ -264,27 +266,30 @@ Three skills were drafted with improved structure using skill-creator methodolog
 - [ ] Breaking: New CLI `python scripts/cite_verify.py --doi <DOI>`
 - [ ] Rollback: `git checkout HEAD -- skills/paper-orchestra/scripts/cite_verify.py; rm skills/cite-verify/`
 
-### `paper-tracker` — MOVE ✅ DONE — IMPROVED ✅
+### `paper-tracker` — MOVE ✅ DONE — IMPROVED ✅ — PAPERVIZAGENT UPGRADED ✅
 - [x] Source: `.paperskills/paperskills/skills/paper-tracker/SKILL.md`
 - [x] Dest: `skills/paper-tracker/SKILL.md`
 - [x] Changes: Remove `name:`; update asset path
 - [x] Improved: Pushy description, API offloaded to references/api-reference.md, scripts/deduplicate.py, scripts/window_filter.py, expanded error handling
+- [x] PapervizAgent upgrade: Added `scripts/batch_fetch.py` — async batch metadata enrichment with `asyncio.Semaphore(max_concurrent=10)` pattern. STEP 2 now offers batch mode (>10 papers) with concurrent OpenAlex/SS/CrossRef lookups
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/paper-tracker/ .paperskills/paperskills/skills/paper-tracker/`
 
-### `citation-network` — MOVE ✅ DONE — IMPROVED ✅
+### `citation-network` — MOVE ✅ DONE — IMPROVED ✅ — PAPERVIZAGENT UPGRADED ✅
 - [x] Source: `.paperskills/paperskills/skills/citation-network/SKILL.md`
 - [x] Dest: `skills/citation-network/SKILL.md`
 - [x] Changes: Remove `name:`; update asset path; use shared SemanticScholarWrapper
 - [x] Improved: Pushy description, API offloaded to references/api-reference.md, subagent prompt to references/network-builder-prompt.md, scripts/resolve_seed.py, scripts/network_stats.py, vis.js HTML skeleton, expanded error handling
+- [x] PapervizAgent upgrade: Added STEP 5 Critic validation loop (max 2 rounds) with `scripts/validate_network.py` — validates vis.js setup, seed paper inclusion, node/edge data, layout config, design system compliance
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/citation-network/ .paperskills/paperskills/skills/citation-network/`
 
-### `journal-match` — MOVE ✅ DONE — IMPROVED ✅
+### `journal-match` — MOVE ✅ DONE — IMPROVED ✅ — PAPERVIZAGENT UPGRADED ✅
 - [x] Source: `.paperskills/paperskills/skills/journal-match/SKILL.md`
 - [x] Dest: `skills/journal-match/SKILL.md`
 - [x] Changes: Remove `name:`; update asset path
 - [x] Improved: Pushy description, API offloaded to references/api-reference.md, subagent prompt to references/similar-papers-prompt.md, assets/journal-report-template.md, scripts/venue_enrich.py, scripts/scope_score.py, expanded error handling
+- [x] PapervizAgent upgrade: Added STEP 0 Retriever→Planner few-shot — finds 5-10 similar published papers via Semantic Scholar to guide journal matching; `references/journal-match-style-guide.md` with tier card styling and Chinese labels
 - [x] Breaking: None
 - [x] Rollback: `git mv skills/journal-match/ .paperskills/paperskills/skills/journal-match/`
 
@@ -295,12 +300,20 @@ Three skills were drafted with improved structure using skill-creator methodolog
 - [ ] Breaking: `/lit-search` redirect to paper-orchestra
 - [ ] Rollback: Restore archived SKILL.md
 
-### `peer-review` — RESTRUCTURE
-- [ ] Source: `.paperskills/paperskills/skills/peer-review/SKILL.md`
-- [ ] Dest: `skills/peer-review/` (orchestrator) + `manuscript-evaluator/` + `missing-refs-detector/`
-- [ ] Changes: Decompose into sub-skills; add baseline scout from ScholarPeer; bilingual K-criteria
-- [ ] Breaking: New sub-triggers `/peer-review evaluate`, `/peer-review missing-refs`
-- [ ] Rollback: Restore original SKILL.md; remove sub-skill dirs
+### `peer-review` — RESTRUCTURE ✅ DONE — IMPROVED ✅
+- [x] Source: `.paperskills/paperskills/skills/peer-review/SKILL.md`
+- [x] Dest: `skills/peer-review/` (orchestrator) + 4-agent pipeline + `missing-refs-detector/`
+- [x] Changes: Restructured into 4-agent PapervizAgent-inspired pipeline:
+  - `evaluator-agent/` — K1-K8 scoring with structured JSON output + Veto Rules (replaces `manuscript-evaluator`)
+  - `retriever-agent/` — Semantic Scholar few-shot similar review retrieval (NEW)
+  - `reporter-agent/` — HTML report generation per style guide (NEW)
+  - `critic-agent/` — iterative report quality validation, max 2 rounds (NEW)
+  - `missing-refs-detector/` — reference gap detection (retained, frontmatter updated)
+  - `references/veto-rules.md` — K1-K8 Veto Rules with absolute pass/fail conditions
+  - `scripts/fetch_review_examples.py` — Semantic Scholar review retrieval
+  - `scripts/validate_report.py` — HTML report structural validation
+- [x] Breaking: Pipeline now: Retriever → Evaluator + MissingRefs (parallel) → Reporter → Critic
+- [x] Rollback: `git checkout HEAD -- skills/peer-review/`
 
 ### `paperskills` (orchestrator) — DEPRECATE
 - [ ] Source: `.paperskills/paperskills/SKILL.md`

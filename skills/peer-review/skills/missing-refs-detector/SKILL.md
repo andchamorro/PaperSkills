@@ -1,6 +1,9 @@
 ---
-name: missing-refs-detector
-description: Find potentially missing references for an academic manuscript by searching Semantic Scholar, OpenAlex, and CrossRef. Detects gaps in the bibliography by comparing against the manuscript's topic and existing cited authors. Used by the peer-review orchestrator.
+description: >-
+  Find potentially missing references for an academic manuscript by searching
+  Semantic Scholar, OpenAlex, and CrossRef. Detects gaps in the bibliography by
+  comparing against the manuscript's topic and existing cited authors. Used by
+  the peer-review orchestrator — do not invoke directly.
 ---
 
 # Missing References Detector

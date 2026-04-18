@@ -116,10 +116,10 @@ def compute_score(profile: dict, journal: dict) -> tuple[int, str]:
     keywords = profile.get("keywords", [])
     discipline = profile.get("discipline", "")
     sub_field = profile.get("sub_field", profile.get("sub-field", ""))
-    methodology = profile.get("methodology", "")
-    scope = profile.get("scope", "")
+    profile.get("methodology", "")
+    profile.get("scope", "")
 
-    journal_name = journal.get("name", "Unknown")
+    journal.get("name", "Unknown")
     subjects = journal.get("subjects", [])
     journal_type = journal.get("type", "journal")
 
@@ -133,9 +133,7 @@ def compute_score(profile: dict, journal: dict) -> tuple[int, str]:
         reasons.append(f"Journal specializes in {sub_field} (exact sub-field match)")
     elif disc == "close":
         score_components.append(1.5)
-        reasons.append(
-            f"Journal covers {discipline} (discipline match, not sub-field specific)"
-        )
+        reasons.append(f"Journal covers {discipline} (discipline match, not sub-field specific)")
     elif disc == "related":
         score_components.append(1)
         reasons.append("Journal is in a related discipline")
@@ -150,9 +148,7 @@ def compute_score(profile: dict, journal: dict) -> tuple[int, str]:
     matched = round(kw_ratio * len(keywords))
     total = len(keywords)
     if kw_ratio >= 0.5:
-        reasons.append(
-            f"Strong keyword overlap ({matched}/{total} keywords match subject area)"
-        )
+        reasons.append(f"Strong keyword overlap ({matched}/{total} keywords match subject area)")
     elif kw_ratio > 0:
         reasons.append(f"Partial keyword overlap ({matched}/{total} keywords match)")
     else:
@@ -182,8 +178,7 @@ def compute_score(profile: dict, journal: dict) -> tuple[int, str]:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Compute a scope match score (1-5) between "
-            "a manuscript profile and a journal."
+            "Compute a scope match score (1-5) between " "a manuscript profile and a journal."
         ),
         epilog=(
             "Example: python scope_score.py "
@@ -204,7 +199,7 @@ def main() -> None:
 
     # Load profile
     try:
-        with open(args.profile, "r", encoding="utf-8") as f:
+        with open(args.profile, encoding="utf-8") as f:
             profile = json.load(f)
     except FileNotFoundError:
         print(
@@ -221,7 +216,7 @@ def main() -> None:
 
     # Load journal
     try:
-        with open(args.journal, "r", encoding="utf-8") as f:
+        with open(args.journal, encoding="utf-8") as f:
             journal = json.load(f)
     except FileNotFoundError:
         print(

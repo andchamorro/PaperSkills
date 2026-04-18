@@ -74,7 +74,7 @@ Read `references/halt-rules.md` for detailed halt conditions. Summary:
 
 1. **Iteration cap reached** (default: 3 iterations)
 2. **Overall score decreased** → revert to previous snapshot, halt
-3. **Tie with negative net sub-axis change** → revert to previous snapshot, halt  
+3. **Tie with negative net sub-axis change** → revert to previous snapshot, halt
 4. **No new actionable weaknesses** → accept current, halt
 
 ## Output Format (Strict)

@@ -73,9 +73,7 @@ def get_trend_data(
     url = f"https://api.openalex.org/works?search={encoded_topic}&group_by=publication_year&mailto={mailto}"
     data = fetch_json(url)
     if data and "group_by" in data:
-        results["yearly_counts"] = {
-            g["key"]: g["count"] for g in data["group_by"] if g["key"]
-        }
+        results["yearly_counts"] = {g["key"]: g["count"] for g in data["group_by"] if g["key"]}
     else:
         errors.append("yearly_counts: failed to fetch publication trend data")
 
@@ -176,9 +174,7 @@ def format_text(data: dict, topic: str) -> str:
     if "concepts" in data:
         lines.append("\nRelated Concepts:")
         for c in data["concepts"]:
-            lines.append(
-                f"  - {c['name']} (level {c['level']}): {c['works_count']} papers"
-            )
+            lines.append(f"  - {c['name']} (level {c['level']}): {c['works_count']} papers")
 
     return "\n".join(lines)
 

@@ -10,8 +10,6 @@ Usage:
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Tuple
-
 
 REQUIRED_FILES = [
     ("inputs/idea.md", "Idea Summary (I)"),
@@ -33,7 +31,7 @@ MIN_CONTENT_LENGTH = {
 }
 
 
-def check_file_exists(desk: Path, rel_path: str) -> Tuple[bool, str]:
+def check_file_exists(desk: Path, rel_path: str) -> tuple[bool, str]:
     """Check if a required file exists."""
     path = desk / rel_path
     if not path.exists():
@@ -41,7 +39,7 @@ def check_file_exists(desk: Path, rel_path: str) -> Tuple[bool, str]:
     return True, f"Found: {rel_path}"
 
 
-def check_file_content(desk: Path, rel_path: str, min_length: int) -> Tuple[bool, str]:
+def check_file_content(desk: Path, rel_path: str, min_length: int) -> tuple[bool, str]:
     """Check if a file has meaningful content."""
     path = desk / rel_path
     if not path.exists():
@@ -51,11 +49,9 @@ def check_file_content(desk: Path, rel_path: str, min_length: int) -> Tuple[bool
 
     # Remove template markers and comments
     lines = [
-        l
-        for l in content.split("\n")
-        if not l.strip().startswith("<!--")
-        and not l.strip().startswith("%")
-        and l.strip()
+        line
+        for line in content.split("\n")
+        if not line.strip().startswith("<!--") and not line.strip().startswith("%") and line.strip()
     ]
 
     actual_content = "\n".join(lines)
@@ -69,7 +65,7 @@ def check_file_content(desk: Path, rel_path: str, min_length: int) -> Tuple[bool
     return True, f"Content OK: {rel_path} ({len(actual_content)} chars)"
 
 
-def check_template_structure(desk: Path) -> Tuple[bool, str]:
+def check_template_structure(desk: Path) -> tuple[bool, str]:
     """Check that the LaTeX template has expected section commands."""
     path = desk / "inputs/tmpl.md"
     if not path.exists():
@@ -103,7 +99,7 @@ def check_template_structure(desk: Path) -> Tuple[bool, str]:
     return True, f"Template structure OK ({section_count} sections found)"
 
 
-def check_log_has_data(desk: Path) -> Tuple[bool, str]:
+def check_log_has_data(desk: Path) -> tuple[bool, str]:
     """Check that the experimental log contains numeric data."""
     path = desk / "inputs/log.md"
     if not path.exists():
@@ -129,7 +125,7 @@ def check_log_has_data(desk: Path) -> Tuple[bool, str]:
     return True, "Experimental log contains numeric data"
 
 
-def validate_desk(desk: Path, strict: bool = False) -> Tuple[bool, List[str]]:
+def validate_desk(desk: Path, strict: bool = False) -> tuple[bool, list[str]]:
     """
     Validate the desk directory.
 
@@ -154,7 +150,7 @@ def validate_desk(desk: Path, strict: bool = False) -> Tuple[bool, List[str]]:
             errors.append(f"Missing required file: {desc}")
 
     # Check optional directories
-    for rel_path, desc in OPTIONAL_DIRS:
+    for rel_path, _desc in OPTIONAL_DIRS:
         path = desk / rel_path
         if path.exists() and path.is_dir():
             file_count = len(list(path.iterdir()))
@@ -202,9 +198,7 @@ def validate_desk(desk: Path, strict: bool = False) -> Tuple[bool, List[str]]:
 
 def main():
     parser = argparse.ArgumentParser(description="Validate PaperOrchestra desk inputs")
-    parser.add_argument(
-        "--desk", type=str, required=True, help="Path to the desk directory"
-    )
+    parser.add_argument("--desk", type=str, required=True, help="Path to the desk directory")
     parser.add_argument(
         "--strict",
         action="store_true",

@@ -178,4 +178,3 @@ Add these styles alongside the base report-template.md CSS:
   margin: 0.5rem 0 0;
 }
 ```
-

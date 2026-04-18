@@ -18,10 +18,9 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import List, Tuple
 
 
-def check_environment_balance(content: str) -> List[str]:
+def check_environment_balance(content: str) -> list[str]:
     """Check that all begin/end environments are balanced."""
     errors = []
 
@@ -42,13 +41,9 @@ def check_environment_balance(content: str) -> List[str]:
         e = end_counts.get(env, 0)
         if b != e:
             if b > e:
-                errors.append(
-                    f"Unbalanced: \\begin{{{env}}} ({b}) > \\end{{{env}}} ({e})"
-                )
+                errors.append(f"Unbalanced: \\begin{{{env}}} ({b}) > \\end{{{env}}} ({e})")
             else:
-                errors.append(
-                    f"Unbalanced: \\end{{{env}}} ({e}) > \\begin{{{env}}} ({b})"
-                )
+                errors.append(f"Unbalanced: \\end{{{env}}} ({e}) > \\begin{{{env}}} ({b})")
 
     # Check for specific mismatches (figure vs figure*)
     figure_begin = len(re.findall(r"\\begin\{figure\}", content))
@@ -57,9 +52,7 @@ def check_environment_balance(content: str) -> List[str]:
     figurestar_end = len(re.findall(r"\\end\{figure\*\}", content))
 
     if figure_begin != figure_end:
-        errors.append(
-            f"figure environment mismatch: {figure_begin} begins, {figure_end} ends"
-        )
+        errors.append(f"figure environment mismatch: {figure_begin} begins, {figure_end} ends")
     if figurestar_begin != figurestar_end:
         errors.append(
             f"figure* environment mismatch: {figurestar_begin} begins, {figurestar_end} ends"
@@ -68,7 +61,7 @@ def check_environment_balance(content: str) -> List[str]:
     return errors
 
 
-def check_document_structure(content: str) -> List[str]:
+def check_document_structure(content: str) -> list[str]:
     """Check for basic document structure."""
     errors = []
 
@@ -91,7 +84,7 @@ def check_document_structure(content: str) -> List[str]:
     return errors
 
 
-def check_references(content: str) -> List[str]:
+def check_references(content: str) -> list[str]:
     """Check that all figure/table references have corresponding labels."""
     warnings = []
 
@@ -110,13 +103,13 @@ def check_references(content: str) -> List[str]:
             warnings.append(f"Undefined reference: \\ref{{{ref}}}")
 
     # Find unused labels (less critical)
-    unused = labels - refs
+    labels - refs
     # Don't warn about unused labels by default
 
     return warnings
 
 
-def check_common_typos(content: str) -> List[str]:
+def check_common_typos(content: str) -> list[str]:
     """Check for common LaTeX typos."""
     warnings = []
 
@@ -137,7 +130,7 @@ def check_common_typos(content: str) -> List[str]:
     return warnings
 
 
-def check_figure_inclusions(content: str) -> List[str]:
+def check_figure_inclusions(content: str) -> list[str]:
     """Check that includegraphics paths are valid."""
     warnings = []
 
@@ -151,15 +144,16 @@ def check_figure_inclusions(content: str) -> List[str]:
         if " " in path and not path.startswith('"'):
             warnings.append(f"Space in path without quotes: {path}")
 
-        if not path.lower().endswith((".png", ".pdf", ".jpg", ".jpeg", ".eps")):
-            # Check if extension is missing
-            if "." not in path.split("/")[-1]:
-                warnings.append(f"Missing file extension: {path}")
+        if (
+            not path.lower().endswith((".png", ".pdf", ".jpg", ".jpeg", ".eps"))
+            and "." not in path.split("/")[-1]
+        ):
+            warnings.append(f"Missing file extension: {path}")
 
     return warnings
 
 
-def validate_latex(filepath: Path, strict: bool = False) -> Tuple[bool, List[str]]:
+def validate_latex(filepath: Path, strict: bool = False) -> tuple[bool, list[str]]:
     """
     Validate a LaTeX file.
 
@@ -203,13 +197,9 @@ def validate_latex(filepath: Path, strict: bool = False) -> Tuple[bool, List[str
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Validate LaTeX manuscript for common errors"
-    )
+    parser = argparse.ArgumentParser(description="Validate LaTeX manuscript for common errors")
     parser.add_argument("manuscript", type=str, help="Path to the manuscript file")
-    parser.add_argument(
-        "--strict", action="store_true", help="Treat warnings as errors"
-    )
+    parser.add_argument("--strict", action="store_true", help="Treat warnings as errors")
     parser.add_argument("--quiet", action="store_true", help="Only output errors")
     args = parser.parse_args()
 

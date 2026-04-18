@@ -10,7 +10,13 @@ This file is kept for backwards compatibility only. It forwards to citation_tool
 import os
 import sys
 
-print("WARNING: orphan_cite_gate.py is deprecated. Use: citation_tool.py orphan-check", file=sys.stderr)
+print(
+    "WARNING: orphan_cite_gate.py is deprecated. Use: citation_tool.py orphan-check",
+    file=sys.stderr,
+)
 # Forward to citation_tool.py orphan-check with the same arguments
 script_dir = os.path.dirname(os.path.abspath(__file__))
-os.execvp(sys.executable, [sys.executable, os.path.join(script_dir, "citation_tool.py"), "orphan-check"] + sys.argv[1:])
+os.execvp(
+    sys.executable,
+    [sys.executable, os.path.join(script_dir, "citation_tool.py"), "orphan-check"] + sys.argv[1:],
+)

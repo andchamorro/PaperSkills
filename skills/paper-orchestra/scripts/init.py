@@ -11,7 +11,6 @@ import argparse
 import os
 from pathlib import Path
 
-
 DESK_STRUCTURE = {
     "inputs": {
         "idea.md": "# Idea Summary\n\n<!-- Write your methodology, core contributions, and theoretical foundation here -->\n\n## Problem Statement\n\n\n## Core Hypothesis\n\n\n## Proposed Methodology\n\n\n## Expected Contribution\n\n",
@@ -70,7 +69,7 @@ EXAMPLE_LOG = """# Experimental Log
 - **Object Categories:** 20 musical instruments, 8 animals, 15 machines, 5 humans, 3 static inaudible objects
 - **Splits:**
   - Training: 2,908 videos
-  - Validation: 276 videos  
+  - Validation: 276 videos
   - Test: 818 videos (Seen: 292, Unseen: 269, Null: 257)
 
 ### Evaluation Metrics
@@ -166,7 +165,7 @@ def main():
     create_structure(base_path, DESK_STRUCTURE, args.with_examples)
 
     print("\nCreated directory structure:")
-    for root, dirs, files in os.walk(base_path):
+    for root, _dirs, files in os.walk(base_path):
         level = root.replace(str(base_path), "").count(os.sep)
         indent = "  " * level
         print(f"{indent}{os.path.basename(root)}/")

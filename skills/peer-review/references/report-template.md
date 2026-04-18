@@ -19,7 +19,7 @@ const ctx = document.getElementById('radarChart').getContext('2d');
 new Chart(ctx, {
   type: 'radar',
   data: {
-    labels: ['K1 Originality', 'K2 Argument', 'K3 Literature', 'K4 Discussion', 
+    labels: ['K1 Originality', 'K2 Argument', 'K3 Literature', 'K4 Discussion',
              'K5 Consistency', 'K6 Methodology', 'K7 Presentation', 'K8 Evidence'],
     datasets: [{
       label: 'Scores',

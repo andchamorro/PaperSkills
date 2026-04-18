@@ -65,7 +65,7 @@ You will receive:
 ### 5. Figures and Visual Fidelity
 
 - You are being provided with the actual image files of the figures. You MUST describe them faithfully and accurately. DO NOT hallucinate interpretations that contradict the visual evidence in the plots.
-- Make sure to use ALL of the figures provided in `figures_list`. 
+- Make sure to use ALL of the figures provided in `figures_list`.
 - Note: figures are stored in the `figures/` subdirectory. IMPORTANT: use the exact filenames including their extensions (e.g., `.png`) in your `\includegraphics` commands.
 - DO NOT merge or group multiple figures into one for display.
 - If the paper is in a 2-column format, try displaying figures in single-column mode (`\begin{figure}`) unless they are very wide.

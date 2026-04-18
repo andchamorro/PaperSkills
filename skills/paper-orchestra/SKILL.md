@@ -153,7 +153,7 @@ The skill implements the loop with strict halt rules from `references/halt-rules
 3. Overall score **ties** but net sub-axis change negative → revert, halt
 4. Reviewer issues no new actionable weaknesses
 
-**Output:** 
+**Output:**
 - `desk/refin/worklog.json`
 - `desk/refin/iter<N>/manuscript.md` (for each iteration)
 - `desk/final/manuscript.md` (accepted snapshot)

@@ -67,7 +67,7 @@ def should_accept_revision(current, previous):
     # Overall score increased → accept
     if current.overall_score > previous.overall_score:
         return True
-    
+
     # Overall score tied → check sub-axes
     if current.overall_score == previous.overall_score:
         net_sub_change = sum(current.sub_scores) - sum(previous.sub_scores)
@@ -75,7 +75,7 @@ def should_accept_revision(current, previous):
             return True  # Tie with non-negative net gain
         else:
             return False  # Tie with negative net gain → revert
-    
+
     # Overall score decreased → revert
     return False
 ```

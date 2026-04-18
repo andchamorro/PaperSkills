@@ -3,7 +3,7 @@ description: >
   Build and visualize multi-level citation networks from seed papers (DOIs or titles).
   Resolves seeds via Semantic Scholar, crawls references and citations to 2 levels,
   computes centrality metrics, and generates an interactive HTML report with vis.js
-  network graph, timeline view, and cluster analysis. Supports English and Chinese output.
+  network graph, timeline view, and cluster analysis.
   Use when the user wants to map a research landscape, find seminal/bridge papers,
   discover citation clusters, or visualize how papers connect across a field.
   Do NOT use for simple literature search or reading summaries — use lit-search instead.
@@ -237,21 +237,6 @@ Validate the HTML report for completeness and vis.js correctness. Pattern inspir
 | **Total** | **~35–55K** |
 
 LIMIT crawl depth to 2 levels from any seed paper. Do NOT exceed this.
-
-## LANGUAGE
-
-1. Determine report language:
-   - If the user explicitly requests a language (e.g., "in Chinese", `用中文`): use that language.
-   - If the manuscript or input is primarily in Chinese: default to Chinese.
-   - Otherwise: default to English.
-
-2. When generating in Chinese:
-   - Set `<html lang="zh">` on the HTML document.
-   - Write all headings, labels, descriptions, and analysis text in Chinese.
-   - Keep technical terms in original form (DOI, journal names, API names).
-   - Use Chinese punctuation (，。、；：).
-   - Stat-label text: Chinese (e.g., "论文数量" not "Papers").
-   - Badge text: Chinese (e.g., "核心论文" not "KEY PAPER", "桥梁论文" not "BRIDGE").
 
 ## REPORT DESIGN
 

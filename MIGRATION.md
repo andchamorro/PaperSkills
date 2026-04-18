@@ -11,7 +11,7 @@
 
 | # | Skill | Lines | Purpose | Token Budget | Architecture | APIs |
 |---|-------|-------|---------|-------------|--------------|------|
-| 1 | `abstract` | 90 | Generate IMRaD/thematic/extended/short abstracts; bilingual | 10–20K | Single agent | None |
+| 1 | `abstract` | 90 | Generate IMRaD/thematic/extended/short abstracts | 10–20K | Single agent | None |
 | 2 | `topic-framing` | 461 | Converge fuzzy idea → paper title via 6-phase dialogue | 15–25K | Single agent | Semantic Scholar |
 | 3 | `lit-search` | 86 | Search Semantic Scholar, OpenAlex, PubMed, arXiv; deduplicated | 15–25K | Single agent | SS, OA, PubMed, arXiv |
 | 4 | `cite-verify` | 246 | Verify citations via CrossRef/SS/OA; optional PDF claim check | 25–65K | 4-step pipeline | CrossRef, SS, OA, Unpaywall |
@@ -351,7 +351,7 @@ Three skills were drafted with improved structure using skill-creator methodolog
 | `budget_tracker.py` — token monitoring | `skills/shared/` | All | MEDIUM |
 | `subagent_templates/` — standardized sub-agent prompts | `skills/shared/` | 5/9 | MEDIUM |
 | `report_components/` — reusable HTML snippets | `skills/shared/` | 6/9 | MEDIUM |
-| `i18n/labels.json` — bilingual label translations | `skills/shared/` | 8/9 | MEDIUM |
+| ~~`i18n/labels.json`~~ | ~~`skills/shared/`~~ | — | REMOVED (English-only, 2026-04-17) |
 
 ---
 
@@ -470,7 +470,7 @@ Semantic Scholar (78%) and OpenAlex (67%) dominate. All 7 SS users should share 
 11 sub-agents across 5 skills (56%). Parallel for independent tasks (peer-review), sequential for pipelines. Standardized templates would reduce duplication.
 
 ### HTML Reports
-6 skills generate HTML reports using `report-template.md` (Crimson Pro, CSS variables, bilingual). Reusable component snippets (`metric-card.html`, `paper-row.html`) would benefit all.
+6 skills generate HTML reports using `report-template.md` (Crimson Pro, CSS variables, English-only). Reusable component snippets (`metric-card.html`, `paper-row.html`) would benefit all.
 
 ### Token Budgets
 Range 10K–85K, median ~35K. No centralized tracking. Budget tracker should be shared.
@@ -478,8 +478,8 @@ Range 10K–85K, median ~35K. No centralized tracking. Budget tracker should be 
 ### Error Handling
 Inconsistent — 44% handle rate limits, no exponential backoff, no circuit breaker, no partial-result standardization. Error handling utilities should be shared.
 
-### Bilingual Support
-8/9 skills support Chinese. `lit-search` is weakest (transliteration only). Full i18n system would benefit all.
+### Bilingual Support — REMOVED (2026-04-17)
+Simplified to English-only. Prior Chinese/bilingual support documented in `.paperskills/legacy/atomic_language_support.md`.
 
 ---
 

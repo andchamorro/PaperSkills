@@ -36,29 +36,29 @@
     },
     {
       "id": 2,
-      "prompt": "帮我把'平台算法治理'收敛成一个可写论文题目",
-      "expected_output": "A Chinese-language framing card with dialogue conducted in Chinese, containing all standard framing fields, literature snapshot from Chinese-language appropriate queries, and title candidates in Chinese academic style.",
+      "prompt": "Help me turn 'platform algorithm governance' into a publishable paper topic",
+      "expected_output": "An English framing card with dialogue covering all standard framing fields, literature snapshot from relevant queries, and title candidates in academic style.",
       "files": [],
       "expectations": [
         {
-          "text": "Dialogue conducted in Chinese",
+          "text": "Dialogue converges to a concrete framing",
           "passed": true,
-          "evidence": "Check that questions and responses are in Chinese"
+          "evidence": "Check that output contains all 8 framing fields"
         },
         {
-          "text": "Output file uses <html lang='zh'> or Chinese labels",
+          "text": "Literature snapshot includes relevant governance/algorithm papers",
           "passed": true,
-          "evidence": "Check HTML lang attribute or markdown Chinese headings"
+          "evidence": "Check literature snapshot section"
         },
         {
-          "text": "Framing maintains academic rigor despite language",
+          "text": "Framing maintains academic rigor",
           "passed": true,
           "evidence": "Verify all 8 framing fields present"
         },
         {
-          "text": "Title candidates are in Chinese academic style",
+          "text": "Title candidates are in academic style",
           "passed": true,
-          "evidence": "Check titles use Chinese academic phrasing"
+          "evidence": "Check titles use academic phrasing"
         }
       ]
     },

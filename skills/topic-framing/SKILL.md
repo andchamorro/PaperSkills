@@ -98,15 +98,6 @@ Ask 6 questions ONE AT A TIME via AskUserQuestion. Wait for each answer before p
 3. Return the exact absolute file path to the user.
 4. Ask whether they want it opened. Only run `open {file_path}` after the user explicitly confirms.
 
-## Language
-
-- If the user explicitly requests a language, use that language throughout.
-- Otherwise, infer from the prompt.
-- If the user writes mainly in Chinese, conduct dialogue and card in Chinese.
-- Default to English.
-
-When generating in Chinese: set `<html lang="zh">`, use Chinese headings/labels, Chinese punctuation (，。、；：).
-
 ## Token Budget
 
 - Steps 1-2 (dialogue): ~8-15K

@@ -71,7 +71,6 @@ Absolute pass/fail conditions for each K-criterion. Inspired by PapervizAgent's 
 
 **Triggers when ANY of these hold:**
 - A key term is defined differently in the introduction vs. methods vs. discussion
-- Translated terms are inconsistent (e.g., same Chinese term rendered as two different English terms)
 - A central concept is used with contradictory meanings without acknowledgment
 - Framework components are renamed mid-paper without explanation
 
@@ -101,7 +100,7 @@ Absolute pass/fail conditions for each K-criterion. Inspired by PapervizAgent's 
 
 **Triggers when ANY of these hold:**
 - More than half of paragraphs contain grammatical errors that change or obscure meaning
-- Paper appears to be raw machine translation without human editing
+- Paper has pervasive grammatical errors suggesting insufficient proofreading
 - Figures/tables are referenced but missing, or present but never referenced
 - Section ordering is incoherent (e.g., results before methods, no introduction)
 

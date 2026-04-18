@@ -52,7 +52,7 @@ Evaluate this manuscript to peer-review standards with Veto Rules.
 | **K2 Argument Structure** | Thesis clear? Logical chain coherent? | 5=crystal clear, 1=unclear |
 | **K3 Literature Coverage** | Source base adequate? Primary sources? Missing key works? | 5=comprehensive, 1=major gaps |
 | **K4 Discussion Depth** | Counterarguments addressed? Genuine engagement? | 5=deep engagement, 1=superficial |
-| **K5 Conceptual Consistency** | Terminology consistent? Translations correct? | 5=consistent, 1=confusing |
+| **K5 Conceptual Consistency** | Terminology consistent across sections? | 5=consistent, 1=confusing |
 | **K6 Methodology** | Method stated? Source/data selection justified? | 5=sound, 1=unclear |
 | **K7 Presentation** | Academic language, paragraph lengths, footnote balance? | 5=polished, 1=needs work |
 | **K8 Evidence** | Claims supported? Unsupported assertions? | 5=well-supported, 1=under-argued |

@@ -119,11 +119,9 @@ Table of 5 sampled citations with claim, cited source, and assessment.
    - `{slug}`: kebab-case manuscript title, max 50 chars
 2. Return the structured report data (file path + any warnings) for the critic-agent to validate.
 
-## Language Rules
+## Language
 
-1. If the orchestrator specifies Chinese: set `<html lang="zh">`, use Chinese headings/labels/punctuation, Chinese criterion names (K1 原创性, K2 论证结构, etc.).
-2. If English (default): set `<html lang="en">`, use English throughout.
-3. Keep technical terms in original form (DOI, API names, journal names).
+All output is in English. Set `<html lang="en">`. Keep technical terms in original form (DOI, API names, journal names).
 
 ## Error Handling
 

@@ -100,14 +100,6 @@ After Step 3, verify token usage stayed within budget:
 
 If landscape output is too large: summarize top 20 papers and trend data before passing to gap analysis subagent.
 
-## Language
-
-- If the user explicitly requests a language, use that language throughout.
-- If the topic/input is primarily in Chinese, default to Chinese.
-- Otherwise, default to English.
-
-When generating in Chinese: set `<html lang="zh">`, use Chinese headings/labels, Chinese punctuation (，。、；：), Chinese badge text (e.g., "高优先级" not "HIGH PRIORITY").
-
 ## Error Handling
 
 | Issue | Handling |

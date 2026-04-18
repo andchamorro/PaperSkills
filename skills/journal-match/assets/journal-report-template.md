@@ -8,12 +8,12 @@ This template defines the journal-specific HTML structure for the recommendation
 
 ```html
 <!DOCTYPE html>
-<html lang="{{LANG}}">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Journal Recommendations — {{MANUSCRIPT_TITLE}}</title>
-  <!-- Font loading per report-template.md (English or Chinese variants) -->
+  <!-- Font loading per report-template.md -->
   <style>
     /* Base CSS from report-template.md */
     /* Journal-specific extensions below */
@@ -95,11 +95,6 @@ This template defines the journal-specific HTML structure for the recommendation
     <!-- TIER 3: SPECIALIZED/NICHE -->
     <h2>Tier 3 — Specialized / Niche</h2>
     <!-- Repeat .journal-card for each Tier 3 journal -->
-
-    <!-- LANGUAGE-SPECIFIC OPTIONS (only if non-English manuscript) -->
-    <h2>Language-Specific Options</h2>
-    <p>Journals publishing in {{LANGUAGE}} with regional academic impact:</p>
-    <!-- Repeat .journal-card or simpler list for language-specific journals -->
 
     <!-- FOOTER -->
     <footer class="report-footer">
@@ -184,24 +179,3 @@ Add these styles alongside the base report-template.md CSS:
 }
 ```
 
-### Chinese Variant Overrides
-
-When generating in Chinese, apply these text substitutions:
-
-| English | Chinese |
-|---|---|
-| Journal Recommendations | 期刊推荐 |
-| Journals Analyzed | 分析期刊数 |
-| Best Match Tier | 最佳匹配层级 |
-| Open Access | 开放获取比例 |
-| Tier 1 — Best Match | 第一层级 — 最佳匹配 |
-| Tier 2 — Good Alternative | 第二层级 — 优良替代 |
-| Tier 3 — Specialized / Niche | 第三层级 — 专业/细分 |
-| Language-Specific Options | 语言特定选项 |
-| BEST MATCH | 最佳匹配 |
-| OPEN ACCESS | 开放获取 |
-| Scope | 范围匹配 |
-| H-index | H指数 |
-| Works | 论文数 |
-| Citations | 被引次数 |
-| Similar papers | 相似论文 |

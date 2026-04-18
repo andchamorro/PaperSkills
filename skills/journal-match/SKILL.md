@@ -4,8 +4,7 @@ description: >-
   discipline, methodology, and language, then searches for similar papers via
   Semantic Scholar and OpenAlex to identify where comparable work is published.
   Enriches journal metadata (h-index, OA status, citation metrics) and produces
-  a tiered HTML report ranking journals by scope alignment and impact. Supports
-  bilingual output (English / Chinese). Use when the user provides a manuscript
+  a tiered HTML report ranking journals by scope alignment and impact. Use when the user provides a manuscript
   file, abstract, or topic and asks "where should I publish this?", "find
   matching journals", "journal recommendation", or "venue selection". Do NOT use
   for citation verification, literature review, paper tracking, reference
@@ -54,7 +53,7 @@ Find 5-10 high-impact published papers similar to the user's submission to guide
    - **Scope**: country-specific | comparative | universal
    - **Length**: estimated word count
    - **Keywords**: 5-10 key terms
-   - **Language**: English, German, Turkish, Chinese, etc.
+   - **Language**: manuscript language (for journal-language matching)
    - **Reference profile**: journals cited in the references (candidate journals)
 3. If the manuscript is too short (<200 words) or yields fewer than 3 keywords, ask the user to supply additional keywords and discipline context.
 
@@ -135,9 +134,6 @@ TIER 2 — GOOD ALTERNATIVE
 TIER 3 — SPECIALIZED/NICHE
   (same card format)
 
-LANGUAGE-SPECIFIC OPTIONS (if non-English manuscript)
-  Journals in the manuscript's language with regional impact
-
 METHODOLOGY NOTE (footer)
   "Recommendations based on venue analysis of similar papers via
    Semantic Scholar and OpenAlex. Scope scores reflect editorial
@@ -162,7 +158,7 @@ Offer follow-up options:
 |---|---|
 | Manuscript too short (<200 words, <3 keywords) | Ask user for keywords, discipline, and methodology |
 | Journal not found in OpenAlex | Try CrossRef by ISSN, then by name variations; mark "metadata unavailable" if all fail |
-| Non-English journals | Note reduced metadata coverage; still include with available data |
+| Journal metadata unavailable | Try CrossRef by ISSN, then by name variations; mark "metadata unavailable" if all fail |
 | All journals are closed access | Note limitation; suggest searching for OA alternatives via DOAJ |
 | No similar papers found | Broaden keywords → discipline-level query → report limitation |
 | API rate limit or timeout | Retry once after 5 seconds; if still failing, proceed with partial data and note gaps |
@@ -176,20 +172,6 @@ Offer follow-up options:
 | Similar papers subagent | ~15-20K |
 | Journal enrichment | ~5-10K |
 | **Total** | **~25-35K** |
-
-## LANGUAGE
-
-1. Determine report language:
-   - If the user explicitly requests a language (e.g., "in Chinese", "用中文"): use that language.
-   - If the manuscript/input is primarily in Chinese: default to Chinese.
-   - Otherwise: default to English.
-2. When generating in Chinese:
-   - Set `<html lang="zh">` on the HTML document.
-   - Write all headings, labels, descriptions, and analysis text in Chinese.
-   - Keep technical terms in original form (DOI, journal names, API names).
-   - Use Chinese punctuation (，。、；：).
-   - Stat-label text in the stats bar: Chinese (e.g., "推荐期刊" not "Journals").
-   - Badge text: Chinese (e.g., "最佳匹配" not "BEST MATCH", "开放获取" not "OPEN ACCESS").
 
 ## REPORT DESIGN
 

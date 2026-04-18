@@ -33,7 +33,7 @@ For each round, check ALL of the following. A check fails if the condition is no
 ### 3. Radar Chart Accuracy
 - [ ] Chart.js `data` array contains exactly 8 values
 - [ ] The 8 values match the scores from the evaluator JSON (in the correct K1-K8 order)
-- [ ] Labels match the 8 criterion names (localized if Chinese report)
+- [ ] Labels match the 8 criterion names
 
 ### 4. Missing References Table
 - [ ] Table is present in the report
@@ -47,10 +47,9 @@ For each round, check ALL of the following. A check fails if the condition is no
 - [ ] No hallucinated content (paper claims, scores, or references not from the evaluator data)
 
 ### 6. Language Consistency
-- [ ] If `<html lang="zh">`, ALL headings, labels, and descriptions are in Chinese
-- [ ] If `<html lang="en">`, ALL headings, labels, and descriptions are in English
-- [ ] No mixed-language sections (except technical terms)
-- [ ] Chinese reports use Chinese punctuation throughout
+- [ ] `<html lang="en">` is set
+- [ ] ALL headings, labels, and descriptions are in English
+- [ ] No mixed-language sections (except technical terms in original form)
 
 ### 7. HTML Validity
 - [ ] Chart.js CDN script tag is present

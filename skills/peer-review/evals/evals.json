@@ -36,29 +36,29 @@
     },
     {
       "id": 2,
-      "prompt": "Review my manuscript at /Users/achamorro/documents/research-paper.docx and give me feedback in Chinese",
-      "expected_output": "Chinese-language HTML peer review report with all standard sections (8 criteria, radar chart, strengths, improvements, missing refs) in Chinese. Criterion names should be Chinese (K1 原创性, K2 论证结构, etc.).",
+      "prompt": "Review my manuscript at /Users/achamorro/documents/research-paper.docx and give me detailed feedback with strengths and weaknesses",
+      "expected_output": "HTML peer review report with all standard sections (8 criteria, radar chart, strengths, improvements, missing refs). Detailed justifications for each criterion score.",
       "files": ["/Users/achamorro/documents/research-paper.docx"],
       "expectations": [
         {
-          "text": "Report language is Chinese",
+          "text": "Report is in English with <html lang='en'>",
           "passed": true,
-          "evidence": "Check <html lang='zh'> and Chinese text"
+          "evidence": "Check HTML lang attribute"
         },
         {
-          "text": "Criterion names in Chinese (K1 原创性, K2 论证结构, etc.)",
+          "text": "All 8 criterion names present (K1-K8)",
           "passed": true,
           "evidence": "Check labels in report"
         },
         {
-          "text": "All 8 criteria scored",
+          "text": "All 8 criteria scored with justifications",
           "passed": true,
-          "evidence": "Verify all K1-K8 present"
+          "evidence": "Verify all K1-K8 present with text justifications"
         },
         {
-          "text": "Missing references in Chinese context",
+          "text": "Missing references table present",
           "passed": true,
-          "evidence": "Check references are relevant to Chinese-language paper"
+          "evidence": "Check references section has entries with why-relevant"
         }
       ]
     },

@@ -49,9 +49,7 @@ Main Session — coordination (no subagents unless user requests comparative ana
    - `html` (default) — single-file HTML report
    - `markdown` — single-file Markdown report
    - `short` — inline chat answer
-4. Detect the **report language**:
-   - If the user explicitly requests a language (`in Chinese`, `用中文`), use it.
-   - Otherwise infer from the prompt language. Default to English if mixed or unclear.
+4. Report language is **English**.
 
 ---
 
@@ -202,12 +200,6 @@ If the user requests Markdown, use this template:
 ```
 
 Write to `reports/{date}-paper-tracker-{slug}.md`.
-
-### 5c. Chinese-Language Reports
-
-1. Set `<html lang="zh">` for HTML reports.
-2. Use Chinese headings, labels, and punctuation.
-3. Keep journal names, DOI strings, and API identifiers in their original form.
 
 ---
 

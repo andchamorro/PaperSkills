@@ -39,7 +39,7 @@ For each criterion, provide: score (1-5), justification, specific suggestion
 | **K2 Argument Structure** | Thesis clear? Logical chain coherent? Repetition? | 5=crystal clear, 1=unclear |
 | **K3 Literature Coverage** | Source base adequate? Primary/secondary? Currency? Missing key works? | 5=comprehensive, 1=major gaps |
 | **K4 Discussion Depth** | Counterarguments fair? Author takes position? Genuine engagement? | 5=deep engagement, 1=superficial |
-| **K5 Conceptual Consistency** | Terminology consistent? Translations correct? Multilingual terms? | 5=consistent, 1=confusing |
+| **K5 Conceptual Consistency** | Terminology consistent across sections? | 5=consistent, 1=confusing |
 | **K6 Methodology** | Method stated? Source/data selection justified? | 5=sound, 1=unclear |
 | **K7 Presentation** | Academic language, paragraph lengths, footnote balance? | 5=polished, 1=needs work |
 | **K8 Evidence** | Claims supported? Unsupported assertions? | 5=well-supported, 1=under-argued |

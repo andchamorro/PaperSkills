@@ -173,52 +173,6 @@ Template for the HTML output in Phase 6 of topic-framing.
 | `{literature snapshot}` | Phase 3 output |
 | `{candidate titles}` | Phase 5 generation with selection |
 
-## Chinese Variant Guidance
-
-When generating in Chinese (`<html lang="zh">`), apply these changes:
-
-### Heading Translations
-
-| English | Chinese |
-|---------|---------|
-| Topic Framing Card | 选题定位卡 |
-| Executive Summary | 摘要总结 |
-| Academic Framing | 学术定位 |
-| Working Question | 研究问题 |
-| Research Puzzle | 研究困惑 |
-| Primary Literature | 主要文献领域 |
-| Gap / Tension | 缺口/张力 |
-| Contribution Claim | 贡献声明 |
-| Unit of Analysis | 分析单位 |
-| Scope (IN) | 研究范围 |
-| Non-scope (OUT) | 排除范围 |
-| Literature Snapshot | 文献快照 |
-| Candidate Titles Considered | 候选标题 |
-| Related papers | 相关论文 |
-| Anchor paper | 锚点论文 |
-| Positioning | 定位分类 |
-| Assessment | 评估判断 |
-
-### CSS Tweaks for CJK
-
-Add these rules when `lang="zh"`:
-
-```css
-body {
-  font-family: "Crimson Pro", "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
-  line-height: 1.8; /* CJK needs more line height */
-}
-.label {
-  min-width: 5em; /* Chinese labels are shorter, grid needs adjustment */
-}
-```
-
-### Punctuation Rules
-
-- Use Chinese punctuation: ，。、；：""（）
-- Keep paper titles, journal names, and API names in original form
-- Keep DOIs, URLs, and technical identifiers in ASCII
-
 ## Markdown Fallback Template
 
 If user explicitly requests markdown:

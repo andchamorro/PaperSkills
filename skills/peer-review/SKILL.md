@@ -108,14 +108,6 @@ Offer after report delivery:
 | Critic fails after 2 rounds | Finalize with caveat note |
 | Evaluator JSON malformed | Reporter reports missing fields, ask user to re-run |
 
-## Language
-
-- If user explicitly requests a language (e.g., "in Chinese"): use that
-- If manuscript is primarily in Chinese: default to Chinese
-- Otherwise: English
-
-When Chinese: `<html lang="zh">`, Chinese headings/labels, Chinese punctuation, Chinese criterion names (K1 原创性, K2 论证结构, K3 文献覆盖, K4 讨论深度, K5 概念一致性, K6 方法论, K7 表达规范, K8 论据支撑)
-
 ## Token Budget
 
 | Phase | Estimated Tokens |

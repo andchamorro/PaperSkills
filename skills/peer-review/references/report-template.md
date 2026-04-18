@@ -65,26 +65,7 @@ new Chart(ctx, {
 
 | Recommendation | Badge Style |
 |----------------|-------------|
-| Accept | Green: "接受" / "ACCEPT" |
-| Minor Revisions | Yellow: "小修" / "MINOR REVISIONS" |
-| Major Revisions | Orange: "大修" / "MAJOR REVISIONS" |
-| Reject | Red: "拒绝" / "REJECT" |
-
-## Chinese Labels
-
-When generating in Chinese:
-
-| English | Chinese |
-|---------|---------|
-| K1 Originality | K1 原创性 |
-| K2 Argument Structure | K2 论证结构 |
-| K3 Literature Coverage | K3 文献覆盖 |
-| K4 Discussion Depth | K4 讨论深度 |
-| K5 Conceptual Consistency | K5 概念一致性 |
-| K6 Methodology | K6 方法论 |
-| K7 Presentation | K7 表达规范 |
-| K8 Evidence | K8 论据支撑 |
-| Overall Score | 综合评分 |
-| Recommendation | 审稿意见 |
-| Strengths | 优点 |
-| Areas for Improvement | 改进建议 |
+| Accept | Green: "ACCEPT" |
+| Minor Revisions | Yellow: "MINOR REVISIONS" |
+| Major Revisions | Orange: "MAJOR REVISIONS" |
+| Reject | Red: "REJECT" |

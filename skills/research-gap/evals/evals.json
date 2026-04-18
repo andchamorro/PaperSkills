@@ -36,22 +36,22 @@
     },
     {
       "id": 2,
-      "prompt": "分析'联邦学习'领域的研究空白，给我HTML报告",
-      "expected_output": "Chinese-language HTML gap analysis report with all standard sections, Chinese headings and labels, and Chinese punctuation throughout the report body.",
+      "prompt": "Analyze research gaps in federated learning and give me an HTML report",
+      "expected_output": "HTML gap analysis report with all standard sections, English headings and labels, gap cards with type badges, and suggested research questions.",
       "files": [],
       "expectations": [
         {
-          "text": "HTML document uses <html lang='zh'>",
+          "text": "HTML document uses <html lang='en'>",
           "passed": true,
           "evidence": "Check lang attribute in HTML tag"
         },
         {
-          "text": "Headings and labels in Chinese",
+          "text": "Headings and labels in English",
           "passed": true,
           "evidence": "Check section headings"
         },
         {
-          "text": "Gap cards and badges in Chinese",
+          "text": "Gap cards with type badges (temporal, methodological, thematic)",
           "passed": true,
           "evidence": "Check gap type badges and labels"
         },

@@ -3,7 +3,7 @@ description: >
   Generate structured and unstructured abstracts (IMRaD, thematic, extended,
   short, single-paragraph) for academic manuscripts in any discipline. Produces
   multiple word-count variants (50-75, 150, 250, 500 words) with keyword sets.
-  Supports bilingual output when the manuscript is not in English. Use when the
+  Use when the
   user asks to write, draft, generate, or improve an abstract for a paper,
   thesis, dissertation, or conference submission. Do NOT use for literature
   reviews, annotated bibliographies, executive summaries of non-academic
@@ -117,16 +117,7 @@ Conference-submission style. May include sub-headings.
 
 Suitable for indexing and cataloging services.
 
-## STEP 4 — BILINGUAL OUTPUT (conditional)
-
-**Trigger:** the manuscript is NOT written in English.
-
-1. Generate every variant from Step 3 in the manuscript's original language.
-2. Generate an English translation of each variant.
-3. Label clearly: `Abstract (Original — <language>)` / `Abstract (English)`.
-4. If the manuscript language cannot be identified, **STOP** and ask the user.
-
-## STEP 5 — QUALITY CHECKS
+## STEP 4 — QUALITY CHECKS
 
 Run the automated quality-check script on each generated abstract:
 
@@ -153,7 +144,7 @@ After the script passes, confirm these semantic criteria:
 - [ ] Does NOT include information absent from the manuscript
 - [ ] Keywords are specific enough for discoverability
 
-## STEP 6 — PRESENT RESULTS
+## STEP 5 — PRESENT RESULTS
 
 1. Display every generated variant with its word count.
 2. If the manuscript had an existing abstract, show a side-by-side comparison
@@ -173,7 +164,7 @@ After the script passes, confirm these semantic criteria:
 | Manuscript < 500 words                 | Warn: "Manuscript is very short (<500 words). The abstract may lack detail." Proceed but flag output as provisional. |
 | Ambiguous discipline                   | Generate BOTH IMRaD and thematic variants (see Step 2).       |
 | Non-UTF-8 encoding detected            | Attempt re-read with Latin-1 fallback. If still unreadable, ask user for encoding. |
-| Unrecognized manuscript language        | Ask user to confirm the language before generating bilingual output. |
+| Unrecognized manuscript language        | Ask user to confirm the language. English output only — see `.paperskills/legacy/atomic_language_support.md` for prior bilingual behavior. |
 | quality_check.py reports failures       | Revise the failing abstract and re-run. Max 3 revision cycles; then present best effort with caveats. |
 
 ---

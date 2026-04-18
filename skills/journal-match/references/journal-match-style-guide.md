@@ -66,21 +66,6 @@ When the Retriever step found similar papers, include a section showing:
 </details>
 ```
 
-## Chinese Labels
-
-When report language is Chinese:
-
-| English | Chinese |
-|---------|---------|
-| Tier 1 — Best Match | 第一梯队 — 最佳匹配 |
-| Tier 2 — Good Alternative | 第二梯队 — 良好选择 |
-| Tier 3 — Specialized/Niche | 第三梯队 — 专业/小众 |
-| Scope Match | 范围匹配度 |
-| Open Access | 开放获取 |
-| H-Index | H指数 |
-| Similar Papers | 相似论文 |
-| Journal Recommendations | 期刊推荐 |
-
 ## Design System
 
 Follow `skills/shared/report-template.md` for base styling:

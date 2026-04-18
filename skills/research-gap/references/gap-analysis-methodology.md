@@ -159,6 +159,6 @@ When writing the HTML report, follow `skills/shared/report-template.md` design s
 - Crimson Pro font
 - CSS custom properties
 - Academic book aesthetic
-- Bilingual labels (Chinese/English based on language setting)
+- English labels throughout
 - Chart.js for visualizations
 - NO Tailwind CDN

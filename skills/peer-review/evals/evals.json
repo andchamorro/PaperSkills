@@ -1,0 +1,94 @@
+{
+  "skill_name": "peer-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Peer review this paper: papers/draft-manuscript.pdf",
+      "expected_output": "HTML report with radar chart showing 8 criteria scores (K1-K8), detailed justifications, strengths/weaknesses lists, section-by-section notes, citation spot-check, missing references table, and recommendation (Accept/Minor/Major/Reject).",
+      "files": ["papers/draft-manuscript.pdf"],
+      "expectations": [
+        {
+          "text": "All 8 criteria scored (K1-K8)",
+          "passed": true,
+          "evidence": "Check radar chart and score table"
+        },
+        {
+          "text": "Scores use 1-5 scale with color coding (green/yellow/red)",
+          "passed": true,
+          "evidence": "Verify color coding in radar chart"
+        },
+        {
+          "text": "Missing references table includes 10-15 papers",
+          "passed": true,
+          "evidence": "Check references section"
+        },
+        {
+          "text": "Recommendation is one of Accept/Minor/Major/Reject",
+          "passed": true,
+          "evidence": "Find recommendation in report"
+        },
+        {
+          "text": "Report is HTML with Chart.js radar chart",
+          "passed": true,
+          "evidence": "Verify file format and chart type"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review my manuscript at /Users/achamorro/documents/research-paper.docx and give me detailed feedback with strengths and weaknesses",
+      "expected_output": "HTML peer review report with all standard sections (8 criteria, radar chart, strengths, improvements, missing refs). Detailed justifications for each criterion score.",
+      "files": ["/Users/achamorro/documents/research-paper.docx"],
+      "expectations": [
+        {
+          "text": "Report is in English with <html lang='en'>",
+          "passed": true,
+          "evidence": "Check HTML lang attribute"
+        },
+        {
+          "text": "All 8 criterion names present (K1-K8)",
+          "passed": true,
+          "evidence": "Check labels in report"
+        },
+        {
+          "text": "All 8 criteria scored with justifications",
+          "passed": true,
+          "evidence": "Verify all K1-K8 present with text justifications"
+        },
+        {
+          "text": "Missing references table present",
+          "passed": true,
+          "evidence": "Check references section has entries with why-relevant"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need a formal peer review for my conference submission at /desk/submission.md including missing reference detection",
+      "expected_output": "Complete HTML report with manuscript evaluation and missing reference detection. Should coordinate sub-agents properly (manuscript-evaluator and missing-refs-detector in parallel), then combine into single report.",
+      "files": ["/desk/submission.md"],
+      "expectations": [
+        {
+          "text": "Sub-agents invoked correctly (manuscript-evaluator + missing-refs-detector)",
+          "passed": true,
+          "evidence": "Check both evaluation and references in output"
+        },
+        {
+          "text": "Report follows design template from assets/report-template.md",
+          "passed": true,
+          "evidence": "Check CSS variables, fonts, layout match template"
+        },
+        {
+          "text": "HTML is print-friendly",
+          "passed": true,
+          "evidence": "Check @media print styles"
+        },
+        {
+          "text": "File path returned to user after creation",
+          "passed": true,
+          "evidence": "Check output includes absolute file path"
+        }
+      ]
+    }
+  ]
+}

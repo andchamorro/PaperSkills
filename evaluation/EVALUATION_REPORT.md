@@ -133,14 +133,14 @@ All models achieve perfect scores on D1 (Functional Correctness), D2 (Instructio
 |---|-----|-----------|
 | **BK-5** | Add latency benchmarking to D6 — time each script execution and compare across models |
 | **BK-6** | Add test for `init.py --with-examples` output quality — check example content is non-empty |
-| **BK-7** | Add fuzzy match for `orphan_cite_gate.py` — detect `\citep` variants |
+| **BK-7** | Add fuzzy match for `citation_tool.py orphan-check` — detect `\citep` variants |
 
 ---
 
 ## 7. Validation Checklist
 
 - [x] 10 prompts executed across all 5 models
-- [x] All scripts (`init`, `validate`, `anti_leakage_check`, `orphan_cite_gate`, `latex_sanity`, `snapshot`) tested end-to-end
+- [x] All scripts (`init`, `validate`, `anti_leakage_check`, `citation_tool`, `latex_sanity`, `snapshot`) tested end-to-end
 - [x] JSON validation for `ol.json` output
 - [x] Anti-leakage detection validated (8 leaks, 6 categories)
 - [x] Citation gate validated (2 orphan citations)

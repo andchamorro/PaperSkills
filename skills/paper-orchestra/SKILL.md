@@ -128,7 +128,7 @@ Invoke `skills/section-writing` with:
 **Post-generation validation:**
 
 ```bash
-python scripts/orphan_cite_gate.py desk/drafts/manuscript.md desk/refs.bib
+python scripts/citation_tool.py orphan-check desk/drafts/manuscript.md desk/refs.bib
 python scripts/latex_sanity.py desk/drafts/manuscript.md
 python scripts/anti_leakage_check.py desk/drafts/manuscript.md
 ```
@@ -197,7 +197,7 @@ Mean latency: 39.6 minutes (from manuscript benchmarks)
 - `scripts/init.py` — Scaffold project desk
 - `scripts/validate.py` — Validate inputs before running
 - `scripts/anti_leakage_check.py` — Check for leaked author info
-- `scripts/orphan_cite_gate.py` — Validate citations
+- `scripts/citation_tool.py` — Unified citation tool (orphan-check, verify, smoke-test)
 - `scripts/latex_sanity.py` — Validate LaTeX structure
 - `scripts/snapshot.py` — Create provenance snapshot
 

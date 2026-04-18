@@ -1,0 +1,99 @@
+{
+  "skill_name": "research-gap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Find research gaps in LLM fairness",
+      "expected_output": "HTML gap analysis report containing: literature landscape (yearly chart, top venues, key authors), gap analysis cards (at least 5 gaps across temporal/methodological/thematic types), suggested research questions, and methodology notes.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "Landscape data includes papers per year and top cited papers",
+          "passed": true,
+          "evidence": "Check Chart.js line chart or table data in HTML report"
+        },
+        {
+          "text": "At least 5 gaps identified across different gap types",
+          "passed": true,
+          "evidence": "Check gap cards with type badges"
+        },
+        {
+          "text": "Suggested research questions are concrete and answerable",
+          "passed": true,
+          "evidence": "Check research questions section"
+        },
+        {
+          "text": "HTML report follows design system (Crimson Pro, CSS variables)",
+          "passed": true,
+          "evidence": "Check HTML head for font and CSS variables"
+        },
+        {
+          "text": "Report file written to reports/ directory",
+          "passed": true,
+          "evidence": "Check file path returned to user"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze research gaps in federated learning and give me an HTML report",
+      "expected_output": "HTML gap analysis report with all standard sections, English headings and labels, gap cards with type badges, and suggested research questions.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "HTML document uses <html lang='en'>",
+          "passed": true,
+          "evidence": "Check lang attribute in HTML tag"
+        },
+        {
+          "text": "Headings and labels in English",
+          "passed": true,
+          "evidence": "Check section headings"
+        },
+        {
+          "text": "Gap cards with type badges (temporal, methodological, thematic)",
+          "passed": true,
+          "evidence": "Check gap type badges and labels"
+        },
+        {
+          "text": "All 5 sections present (summary, landscape, gaps, questions, notes)",
+          "passed": true,
+          "evidence": "Check section count in HTML"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "What are the main temporal and methodological research gaps in automated peer review? Give me a report.",
+      "expected_output": "HTML report focused on temporal gaps (declining areas) and methodological gaps (theory vs. empirical) in automated peer review literature. Should include year-over-year trend data and method distribution.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "Temporal gaps identified (topics that peaked and declined)",
+          "passed": true,
+          "evidence": "Check for temporal gap type cards in report"
+        },
+        {
+          "text": "Methodological gaps identified (e.g., theory vs. empirical)",
+          "passed": true,
+          "evidence": "Check for methodological gap type cards in report"
+        },
+        {
+          "text": "Trend data shows publication counts by year",
+          "passed": true,
+          "evidence": "Check Chart.js chart or year table"
+        },
+        {
+          "text": "Research questions derived from identified gaps",
+          "passed": true,
+          "evidence": "Check research questions section"
+        },
+        {
+          "text": "Error handling: graceful if topic too broad or APIs fail",
+          "passed": true,
+          "evidence": "Check error messages in output"
+        }
+      ]
+    }
+  ]
+}

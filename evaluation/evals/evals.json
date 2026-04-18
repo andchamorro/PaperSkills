@@ -55,7 +55,7 @@
     },
     {
       "id": 5,
-      "prompt": "Run: python scripts/orphan_cite_gate.py evaluation/evals/files/sample-manuscript.tex evaluation/evals/files/complete-desk/inputs/tmpl.md. Report what orphan citations were found.",
+      "prompt": "Run: python scripts/citation_tool.py orphan-check evaluation/evals/files/sample-manuscript.tex evaluation/evals/files/complete-desk/inputs/tmpl.md. Report what orphan citations were found.",
       "expected_output": "List of citations in manuscript not present in tmpl.md (which has no refs)",
       "files": ["evaluation/evals/files/sample-manuscript.tex"],
       "expectations": [

@@ -1,0 +1,99 @@
+{
+  "skill_name": "topic-framing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Frame a paper topic about AI search ads and advertiser strategy",
+      "expected_output": "An HTML framing card (or markdown if user specifies) containing: working question, research puzzle, primary literature, gap/tension, contribution claim, unit of analysis, scope boundaries, literature snapshot with 3 query scan, and 5 title candidates with one selected.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "Dialogue successfully converges to a concrete framing",
+          "passed": true,
+          "evidence": "Check that output contains all 8 framing fields"
+        },
+        {
+          "text": "Phase 2 asks 6 framing questions (or smart-skips appropriately)",
+          "passed": true,
+          "evidence": "Verify Q1-Q6 are addressed"
+        },
+        {
+          "text": "Phase 3 performs literature scan with 3 queries",
+          "passed": true,
+          "evidence": "Check literature snapshot in output"
+        },
+        {
+          "text": "Phase 5 produces 5 title candidates and user selects one",
+          "passed": true,
+          "evidence": "Verify titles section with selection marked"
+        },
+        {
+          "text": "Output is either HTML or markdown as requested",
+          "passed": true,
+          "evidence": "Check file format matches user's 'html' request"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Help me turn 'platform algorithm governance' into a publishable paper topic",
+      "expected_output": "An English framing card with dialogue covering all standard framing fields, literature snapshot from relevant queries, and title candidates in academic style.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "Dialogue converges to a concrete framing",
+          "passed": true,
+          "evidence": "Check that output contains all 8 framing fields"
+        },
+        {
+          "text": "Literature snapshot includes relevant governance/algorithm papers",
+          "passed": true,
+          "evidence": "Check literature snapshot section"
+        },
+        {
+          "text": "Framing maintains academic rigor",
+          "passed": true,
+          "evidence": "Verify all 8 framing fields present"
+        },
+        {
+          "text": "Title candidates are in academic style",
+          "passed": true,
+          "evidence": "Check titles use academic phrasing"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Turn this fuzzy idea into a researchable title and output html: I'm interested in studying how LLMs could help automate peer review but I'm not sure what specific angle to take",
+      "expected_output": "HTML framing card starting from fuzzy idea, going through full 6 phases, converging to a specific researchable question and title. Should include literature positioning showing whether the idea is viable.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "Handles fuzzy starting point — narrows to specific question",
+          "passed": true,
+          "evidence": "Check working question is concrete, not fuzzy"
+        },
+        {
+          "text": "Phase 1 correctly identifies user stage as 'broad topic'",
+          "passed": true,
+          "evidence": "Check assessment in output"
+        },
+        {
+          "text": "Phase 3 literature scan identifies gap viability",
+          "passed": true,
+          "evidence": "Check classification in literature snapshot"
+        },
+        {
+          "text": "Final title is specific and researchable",
+          "passed": true,
+          "evidence": "Check title reflects concrete angle"
+        },
+        {
+          "text": "HTML output with all required fields",
+          "passed": true,
+          "evidence": "Verify file structure"
+        }
+      ]
+    }
+  ]
+}

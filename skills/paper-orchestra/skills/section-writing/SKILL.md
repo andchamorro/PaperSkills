@@ -103,7 +103,7 @@ You will receive:
 After saving to `desk/drafts/manuscript.md`, the orchestrator runs:
 
 ```bash
-python scripts/orphan_cite_gate.py desk/drafts/manuscript.md desk/refs.bib
+python scripts/citation_tool.py orphan-check desk/drafts/manuscript.md desk/refs.bib
 python scripts/latex_sanity.py desk/drafts/manuscript.md
 ```
 

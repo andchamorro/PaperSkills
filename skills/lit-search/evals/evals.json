@@ -1,0 +1,84 @@
+{
+  "skill_name": "lit-search",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Search for papers on deep learning based medical image segmentation",
+      "expected_output": "A table with 15-20 deduplicated papers ranked by relevance x citations, showing authors, title, year, venue, citation count, DOI, and open access status. Should include abstracts for top results.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "Results include papers from at least 2 different APIs (Semantic Scholar + OpenAlex)",
+          "passed": true,
+          "evidence": "Check that output shows papers with different source indicators"
+        },
+        {
+          "text": "Duplicates are removed - no paper appears twice",
+          "passed": true,
+          "evidence": "Verify DOI uniqueness in results"
+        },
+        {
+          "text": "Results are sorted by relevance × log(citations)",
+          "passed": true,
+          "evidence": "Check ordering in output table"
+        },
+        {
+          "text": "Table includes all required columns: #, Authors, Title, Year, Venue, Cites, DOI, OA",
+          "passed": true,
+          "evidence": "Verify table header matches"
+        },
+        {
+          "text": "Next action suggestions are provided",
+          "passed": true,
+          "evidence": "Check for expand, citation network, literature review outline options"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Find recent academic literature on transformer architectures for time series forecasting",
+      "expected_output": "Top results should be recent (2021-2024), with a mix of conference papers (NeurIPS, ICML, ICLR) and journals. Should prioritize relevance over raw citation count.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "Most recent papers are from 2021-2024",
+          "passed": true,
+          "evidence": "Check year column for recent dates"
+        },
+        {
+          "text": "Results cover both transformer methods and time series forecasting",
+          "passed": true,
+          "evidence": "Verify titles mention both concepts"
+        },
+        {
+          "text": "arXiv is included in the search (appropriate for CS topic)",
+          "passed": true,
+          "evidence": "Check for arXiv papers in results"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "What has been published on peer review automation in the last 5 years? I need to find key papers for a literature review",
+      "expected_output": "A focused set of papers from 2019-2024 on peer review systems, AI in peer review, or automated review processes. Should include highly cited foundational papers.",
+      "files": [],
+      "expectations": [
+        {
+          "text": "All papers are from 2019-2024",
+          "passed": true,
+          "evidence": "Verify year range in results"
+        },
+        {
+          "text": "Results include both highly cited foundational papers and recent work",
+          "passed": true,
+          "evidence": "Check mix of citation counts"
+        },
+        {
+          "text": "Results are relevant to peer review automation topic",
+          "passed": true,
+          "evidence": "Verify titles relate to peer review"
+        }
+      ]
+    }
+  ]
+}

@@ -8,7 +8,7 @@ description: >-
   user asks to "search for papers", "find academic literature", "literature
   review", "citation search", or "related work writing". Do NOT use for
   citation verification (use citation_tool.py), citation networks
-  (use citation-network), or journal matching (use journal-match).
+  (use connected-citations), or journal matching (use journal-match).
 ---
 
 # Literature Review Agent
@@ -187,7 +187,7 @@ Return a markdown table:
 ```
 
 Then offer next actions:
-1. "Build a citation network?" → `/citation-network DOI1 DOI2`
+1. "Build a citation network?" → `/connected-citations DOI1 DOI2`
 2. "Find research gaps?" → `/research-gap {topic}`
 3. "Save results to BibTeX?"
 

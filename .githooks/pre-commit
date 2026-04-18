@@ -1,22 +1,21 @@
 #!/bin/bash
-# Pre-commit hook to sync literature-review master → subtree
-# Master: skills/literature-review/
-# Subtree: skills/paper-orchestra/skills/literature-review/
+# Pre-commit hook:
+#   1. Sync literature-review master → subtree
+#   2. Run pre-commit checks (black, ruff, whitespace, etc.)
 
+# ── 1. Literature-review sync ─────────────────────────────────────────────────
 MASTER_DIR="skills/literature-review"
 SUBTREE_DIR="skills/paper-orchestra/skills/literature-review"
 
-# Only run if master exists and has changes
 if [ -d "$MASTER_DIR" ] && [ -d "$SUBTREE_DIR" ]; then
-    # Check if there are any changes in the master directory
-    if git diff --quiet "$MASTER_DIR" 2>/dev/null; then
-        # No changes in master, nothing to sync
-        exit 0
+    if ! git diff --quiet "$MASTER_DIR" 2>/dev/null; then
+        cp -r "$MASTER_DIR"/* "$SUBTREE_DIR/" 2>/dev/null || true
+        git add "$SUBTREE_DIR" 2>/dev/null || true
     fi
+fi
 
-    # Sync master → subtree
-    cp -r "$MASTER_DIR"/* "$SUBTREE_DIR/" 2>/dev/null || true
-
-    # Add the synced files to be committed
-    git add "$SUBTREE_DIR" 2>/dev/null || true
+# ── 2. pre-commit checks ──────────────────────────────────────────────────────
+if command -v pre-commit &>/dev/null; then
+    pre-commit run --hook-stage commit
+    exit $?
 fi

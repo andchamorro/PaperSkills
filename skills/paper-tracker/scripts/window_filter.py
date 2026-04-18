@@ -15,7 +15,6 @@ import json
 import sys
 from datetime import date, datetime
 
-
 DATE_FORMATS = [
     "%Y-%m-%d",
     "%Y-%m-%dT%H:%M:%S",

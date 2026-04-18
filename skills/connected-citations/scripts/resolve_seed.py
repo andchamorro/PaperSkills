@@ -19,7 +19,6 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-
 BASE_URL = "https://api.semanticscholar.org/graph/v1"
 FIELDS = "paperId,title,authors,year,citationCount,externalIds"
 REQUEST_INTERVAL = 1.0  # seconds between requests (rate limiting)
@@ -140,9 +139,7 @@ def resolve_by_title(title: str) -> dict | None:
 
 def _looks_like_doi(value: str) -> bool:
     """Heuristic: does the string look like a DOI?"""
-    return bool(
-        re.match(r"^(https?://doi\.org/|doi\.org/|DOI:)?10\.\d{4,}/", value.strip())
-    )
+    return bool(re.match(r"^(https?://doi\.org/|doi\.org/|DOI:)?10\.\d{4,}/", value.strip()))
 
 
 def main() -> None:

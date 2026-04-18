@@ -28,11 +28,13 @@ DELAY_SECONDS = 1.1
 
 def search_semantic_scholar(query: str, limit: int = 20) -> list:
     """Search Semantic Scholar and return results."""
-    params = urllib.parse.urlencode({
-        "query": query,
-        "limit": limit,
-        "fields": FIELDS,
-    })
+    params = urllib.parse.urlencode(
+        {
+            "query": query,
+            "limit": limit,
+            "fields": FIELDS,
+        }
+    )
     url = f"{SS_BASE}?{params}"
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "PaperSkills/1.0"})
@@ -99,15 +101,17 @@ def fetch_review_examples(field: str, keywords: str, limit: int = 5) -> list:
             abstract = paper.get("abstract") or ""
             summary = abstract[:300] + "..." if len(abstract) > 300 else abstract
 
-        examples.append({
-            "id": paper.get("paperId"),
-            "title": paper.get("title"),
-            "authors": author_str,
-            "venue": paper.get("venue", "Unknown"),
-            "year": paper.get("year"),
-            "citations": paper.get("citationCount", 0),
-            "summary": summary,
-        })
+        examples.append(
+            {
+                "id": paper.get("paperId"),
+                "title": paper.get("title"),
+                "authors": author_str,
+                "venue": paper.get("venue", "Unknown"),
+                "year": paper.get("year"),
+                "citations": paper.get("citationCount", 0),
+                "summary": summary,
+            }
+        )
 
     return examples
 

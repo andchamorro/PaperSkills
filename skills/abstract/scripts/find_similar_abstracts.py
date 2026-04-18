@@ -28,11 +28,13 @@ DELAY_SECONDS = 1.1
 
 def search_semantic_scholar(query: str, limit: int = 20) -> list:
     """Search Semantic Scholar and return results."""
-    params = urllib.parse.urlencode({
-        "query": query,
-        "limit": limit,
-        "fields": FIELDS,
-    })
+    params = urllib.parse.urlencode(
+        {
+            "query": query,
+            "limit": limit,
+            "fields": FIELDS,
+        }
+    )
     url = f"{SS_BASE}?{params}"
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "PaperSkills/1.0"})
@@ -87,20 +89,32 @@ def find_similar_abstracts(field: str, keywords: str, limit: int = 5) -> list:
         abstract = paper.get("abstract", "")
         word_count = len(abstract.split())
 
-        examples.append({
-            "id": paper.get("paperId"),
-            "title": paper.get("title"),
-            "authors": author_str,
-            "venue": paper.get("venue", "Unknown"),
-            "year": paper.get("year"),
-            "citations": paper.get("citationCount", 0),
-            "abstract": abstract,
-            "word_count": word_count,
-            "format": "structured" if any(
-                kw in abstract.lower()
-                for kw in ["background:", "objective:", "methods:", "results:", "conclusion:"]
-            ) else "unstructured",
-        })
+        examples.append(
+            {
+                "id": paper.get("paperId"),
+                "title": paper.get("title"),
+                "authors": author_str,
+                "venue": paper.get("venue", "Unknown"),
+                "year": paper.get("year"),
+                "citations": paper.get("citationCount", 0),
+                "abstract": abstract,
+                "word_count": word_count,
+                "format": (
+                    "structured"
+                    if any(
+                        kw in abstract.lower()
+                        for kw in [
+                            "background:",
+                            "objective:",
+                            "methods:",
+                            "results:",
+                            "conclusion:",
+                        ]
+                    )
+                    else "unstructured"
+                ),
+            }
+        )
 
     return examples
 

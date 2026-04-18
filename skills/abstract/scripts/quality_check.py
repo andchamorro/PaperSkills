@@ -22,9 +22,7 @@ Exit codes:
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
-
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -126,8 +124,7 @@ def check_structure(text: str, fmt: str | None) -> list[dict]:
                 "check": "structure",
                 "line": 0,
                 "detail": (
-                    f"Missing expected headings for '{fmt}' format: "
-                    f"{', '.join(missing)}."
+                    f"Missing expected headings for '{fmt}' format: " f"{', '.join(missing)}."
                 ),
             }
         )

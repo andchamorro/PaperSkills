@@ -17,8 +17,6 @@ import argparse
 import re
 import sys
 from pathlib import Path
-from typing import List, Tuple
-
 
 # Patterns that suggest author identity leakage
 LEAK_PATTERNS = [
@@ -73,15 +71,10 @@ def is_whitelisted(text: str, match: re.Match) -> bool:
     end = min(len(text), match.end() + 50)
     context = text[start:end]
 
-    for pattern in WHITELIST_PATTERNS:
-        if re.search(pattern, context, re.IGNORECASE):
-            return True
-    return False
+    return any(re.search(pattern, context, re.IGNORECASE) for pattern in WHITELIST_PATTERNS)
 
 
-def check_for_leaks(
-    content: str, strict: bool = False
-) -> List[Tuple[str, str, int, str]]:
+def check_for_leaks(content: str, strict: bool = False) -> list[tuple[str, str, int, str]]:
     """
     Scan content for potential author identity leaks.
 
@@ -89,7 +82,7 @@ def check_for_leaks(
         List of tuples: (pattern_type, matched_text, line_number, context)
     """
     leaks = []
-    lines = content.split("\n")
+    content.split("\n")
 
     patterns = LEAK_PATTERNS.copy()
     if strict:
@@ -115,7 +108,7 @@ def check_for_leaks(
     return leaks
 
 
-def check_manuscript(filepath: Path, strict: bool = False) -> Tuple[bool, List[str]]:
+def check_manuscript(filepath: Path, strict: bool = False) -> tuple[bool, list[str]]:
     """
     Check a manuscript file for leaks.
 
@@ -146,18 +139,14 @@ def check_manuscript(filepath: Path, strict: bool = False) -> Tuple[bool, List[s
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Check manuscript for leaked author information"
-    )
+    parser = argparse.ArgumentParser(description="Check manuscript for leaked author information")
     parser.add_argument("manuscript", type=str, help="Path to the manuscript file")
     parser.add_argument(
         "--strict",
         action="store_true",
         help="Enable strict checking (more aggressive patterns)",
     )
-    parser.add_argument(
-        "--quiet", action="store_true", help="Only output if leaks are found"
-    )
+    parser.add_argument("--quiet", action="store_true", help="Only output if leaks are found")
     parser.add_argument(
         "--fail-on-leak",
         action="store_true",

@@ -26,7 +26,7 @@ from collections import defaultdict
 def _load_json(path: str) -> dict | list:
     """Load and parse a JSON file. Exit with descriptive error on failure."""
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         print(f"[network_stats] ERROR: File not found: {path}", file=sys.stderr)
@@ -97,7 +97,7 @@ def compute_betweenness_centrality(
     node_ids = [n["id"] for n in nodes]
     n = len(node_ids)
     if n <= 2:
-        return {nid: 0.0 for nid in node_ids}
+        return dict.fromkeys(node_ids, 0.0)
 
     # Build undirected adjacency for shortest-path computation
     adj = defaultdict(set)
@@ -317,9 +317,7 @@ def main() -> None:
         "bridges": bridges,
         "clusters": clusters,
         "degree_centrality": {nid: round(v, 4) for nid, v in sorted_by_degree},
-        "betweenness_centrality": {
-            nid: round(v, 4) for nid, v in sorted_by_betweenness if v > 0
-        },
+        "betweenness_centrality": {nid: round(v, 4) for nid, v in sorted_by_betweenness if v > 0},
     }
 
     json.dump(result, sys.stdout, indent=2, ensure_ascii=False)

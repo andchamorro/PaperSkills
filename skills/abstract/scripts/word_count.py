@@ -56,7 +56,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             text = filepath.read_text(encoding="latin-1")
             print(
-                f"WARNING: File was not valid UTF-8; read with Latin-1 fallback.",
+                "WARNING: File was not valid UTF-8; read with Latin-1 fallback.",
                 file=sys.stderr,
             )
         except Exception as exc:

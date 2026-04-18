@@ -12,9 +12,8 @@ Usage:
 import argparse
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict, Optional
 
 
 def hash_file(filepath: Path) -> str:
@@ -26,7 +25,7 @@ def hash_file(filepath: Path) -> str:
     return sha256.hexdigest()
 
 
-def hash_directory(dirpath: Path) -> Dict[str, str]:
+def hash_directory(dirpath: Path) -> dict[str, str]:
     """Compute hashes for all files in a directory."""
     hashes = {}
     if dirpath.exists() and dirpath.is_dir():
@@ -37,7 +36,7 @@ def hash_directory(dirpath: Path) -> Dict[str, str]:
     return hashes
 
 
-def create_provenance(desk: Path) -> Dict:
+def create_provenance(desk: Path) -> dict:
     """
     Create a provenance snapshot of the desk.
 
@@ -45,7 +44,7 @@ def create_provenance(desk: Path) -> Dict:
         Dictionary with all file hashes and metadata
     """
     provenance = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "desk_path": str(desk.absolute()),
         "inputs": {},
         "outputs": {},
@@ -110,7 +109,7 @@ def create_provenance(desk: Path) -> Dict:
     return provenance
 
 
-def verify_provenance(desk: Path, provenance: Dict) -> Dict:
+def verify_provenance(desk: Path, provenance: dict) -> dict:
     """
     Verify current files against a provenance snapshot.
 
@@ -119,7 +118,7 @@ def verify_provenance(desk: Path, provenance: Dict) -> Dict:
     """
     results = {
         "verified": True,
-        "timestamp_checked": datetime.now(timezone.utc).isoformat(),
+        "timestamp_checked": datetime.now(UTC).isoformat(),
         "original_timestamp": provenance.get("timestamp"),
         "mismatches": [],
         "missing": [],
@@ -155,9 +154,7 @@ def verify_provenance(desk: Path, provenance: Dict) -> Dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Create or verify provenance snapshot")
-    parser.add_argument(
-        "--desk", type=str, required=True, help="Path to the desk directory"
-    )
+    parser.add_argument("--desk", type=str, required=True, help="Path to the desk directory")
     parser.add_argument(
         "--output",
         type=str,
@@ -170,9 +167,7 @@ def main():
         default=None,
         help="Path to existing provenance.json to verify against",
     )
-    parser.add_argument(
-        "--pretty", action="store_true", help="Pretty-print JSON output"
-    )
+    parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output")
     args = parser.parse_args()
 
     desk = Path(args.desk)

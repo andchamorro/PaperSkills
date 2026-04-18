@@ -119,15 +119,13 @@ def main() -> None:
     parser.add_argument(
         "--mailto",
         default="paperskills@example.com",
-        help=(
-            "Email for OpenAlex polite pool access (default: paperskills@example.com)."
-        ),
+        help=("Email for OpenAlex polite pool access (default: paperskills@example.com)."),
     )
     args = parser.parse_args()
 
     # Load journal names
     try:
-        with open(args.journals, "r", encoding="utf-8") as f:
+        with open(args.journals, encoding="utf-8") as f:
             journal_names = json.load(f)
     except FileNotFoundError:
         print(

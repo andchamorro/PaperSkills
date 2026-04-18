@@ -39,14 +39,13 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
-from typing import Set, Tuple
-
 
 # ──────────────────────────────────────────────────────────────────────
 # Subcommand: orphan-check  (former orphan_cite_gate.py)
 # ──────────────────────────────────────────────────────────────────────
 
-def extract_citations_from_tex(content: str) -> Set[str]:
+
+def extract_citations_from_tex(content: str) -> set[str]:
     """Extract all citation keys from LaTeX/Markdown content."""
     cite_pattern = r"\\cite[pt]?\{([^}]+)\}"
     citations = set()
@@ -57,7 +56,7 @@ def extract_citations_from_tex(content: str) -> Set[str]:
     return citations
 
 
-def extract_bibtex_keys(content: str) -> Set[str]:
+def extract_bibtex_keys(content: str) -> set[str]:
     """Extract all entry keys from BibTeX content."""
     key_pattern = r"@\w+\{([^,]+),"
     keys = set()
@@ -66,7 +65,7 @@ def extract_bibtex_keys(content: str) -> Set[str]:
     return keys
 
 
-def orphan_check(manuscript: Path, bibtex: Path, strict: bool = False) -> Tuple[bool, list]:
+def orphan_check(manuscript: Path, bibtex: Path, strict: bool = False) -> tuple[bool, list]:
     """
     Validate that all citations in manuscript exist in bibtex file.
 
@@ -93,9 +92,7 @@ def orphan_check(manuscript: Path, bibtex: Path, strict: bool = False) -> Tuple[
     unused = available_keys - cited_keys
 
     if orphans:
-        messages.append(
-            f"\n✗ Found {len(orphans)} orphan citation(s) (cited but not in refs.bib):"
-        )
+        messages.append(f"\n✗ Found {len(orphans)} orphan citation(s) (cited but not in refs.bib):")
         for key in sorted(orphans):
             messages.append(f"  - {key}")
 
@@ -108,9 +105,7 @@ def orphan_check(manuscript: Path, bibtex: Path, strict: bool = False) -> Tuple[
                 break
 
     if unused and strict:
-        messages.append(
-            f"\n⚠ Found {len(unused)} unused citation(s) (in refs.bib but not cited):"
-        )
+        messages.append(f"\n⚠ Found {len(unused)} unused citation(s) (in refs.bib but not cited):")
         for key in sorted(unused)[:10]:
             messages.append(f"  - {key}")
         if len(unused) > 10:
@@ -158,7 +153,7 @@ def _fetch(url: str, timeout: int = 15) -> dict | None:
         req = urllib.request.Request(url, headers={"User-Agent": "PaperSkills/1.0 (citation_tool)"})
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read().decode())
-    except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError) as e:
+    except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError):
         return None
 
 
@@ -169,7 +164,7 @@ def normalize_doi(doi: str) -> str | None:
     doi = doi.lower().strip()
     for prefix in ["https://doi.org/", "http://doi.org/", "doi:"]:
         if doi.startswith(prefix):
-            doi = doi[len(prefix):]
+            doi = doi[len(prefix) :]
     return doi if doi.startswith("10.") else None
 
 
@@ -248,8 +243,9 @@ def _parse_backend_response(backend: str, data: dict) -> dict | None:
                 f"{a.get('given', '')} {a.get('family', '')}".strip()
                 for a in msg.get("author", [])[:5]
             ],
-            "year": (msg.get("published-print") or msg.get("published-online") or {})
-                    .get("date-parts", [[None]])[0][0],
+            "year": (msg.get("published-print") or msg.get("published-online") or {}).get(
+                "date-parts", [[None]]
+            )[0][0],
             "venue": (msg.get("container-title") or [None])[0],
             "doi": msg.get("DOI"),
             "page": msg.get("page"),
@@ -282,8 +278,7 @@ def _parse_backend_response(backend: str, data: dict) -> dict | None:
         return {
             "title": data.get("display_name") or data.get("title"),
             "authors": [
-                a.get("author", {}).get("display_name", "")
-                for a in data.get("authorships", [])[:5]
+                a.get("author", {}).get("display_name", "") for a in data.get("authorships", [])[:5]
             ],
             "year": data.get("publication_year"),
             "venue": (data.get("primary_location") or {}).get("source", {}).get("display_name"),
@@ -313,12 +308,14 @@ def verify_bib(bib_path: Path, backends: list[str]) -> list[dict]:
         author_match = re.search(r"author\s*=\s*\{([^}]+)\}", body, re.IGNORECASE)
         doi_match = re.search(r"doi\s*=\s*\{([^}]+)\}", body, re.IGNORECASE)
 
-        entries.append({
-            "key": key,
-            "title": title_match.group(1) if title_match else None,
-            "author": author_match.group(1).split(" and ")[0].strip() if author_match else None,
-            "doi": doi_match.group(1) if doi_match else None,
-        })
+        entries.append(
+            {
+                "key": key,
+                "title": title_match.group(1) if title_match else None,
+                "author": author_match.group(1).split(" and ")[0].strip() if author_match else None,
+                "doi": doi_match.group(1) if doi_match else None,
+            }
+        )
 
     results = []
     for i, entry in enumerate(entries):
@@ -339,6 +336,7 @@ def verify_bib(bib_path: Path, backends: list[str]) -> list[dict]:
 # Subcommand: smoke-test
 # ──────────────────────────────────────────────────────────────────────
 
+
 def smoke_test() -> bool:
     """Run minimal smoke tests to verify the tool works."""
     print("Running smoke tests...\n", file=sys.stderr)
@@ -347,7 +345,9 @@ def smoke_test() -> bool:
 
     # Test 1: orphan-check with inline data
     print("  Test 1: orphan-check (no orphans)...", file=sys.stderr, end=" ")
-    import tempfile, os
+    import os
+    import tempfile
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".tex", delete=False) as f:
         f.write(r"We follow \cite{smith2024} and \citep{jones2023}.")
         tex_path = f.name
@@ -419,6 +419,7 @@ def smoke_test() -> bool:
 # CLI
 # ──────────────────────────────────────────────────────────────────────
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Unified citation verification and validation tool",
@@ -480,12 +481,18 @@ Examples:
         if args.bib:
             results = verify_bib(Path(args.bib), backends)
             found = sum(1 for r in results if r["status"] == "FOUND")
-            print(json.dumps({
-                "total": len(results),
-                "found": found,
-                "not_found": len(results) - found,
-                "results": results,
-            }, indent=2, ensure_ascii=False))
+            print(
+                json.dumps(
+                    {
+                        "total": len(results),
+                        "found": found,
+                        "not_found": len(results) - found,
+                        "results": results,
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                )
+            )
             sys.exit(0 if found == len(results) else 1)
         elif args.doi or args.title:
             result = verify_single(

@@ -1,4 +1,5 @@
 ---
+name: research-gap
 description: Identifies research gaps in a field using Semantic Scholar and OpenAlex trend data. Covers temporal, methodological, thematic, application, and population gaps. Produces an HTML report with Chart.js visualizations by default. Use when the user wants to find research gaps, map underexplored areas, or generate research questions from a literature landscape. Don't use for topic framing, paper drafting, citation verification, or journal matching.
 ---
 

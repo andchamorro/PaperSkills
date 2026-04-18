@@ -1,4 +1,5 @@
 ---
+name: connected-citations
 description: >
   Build and visualize multi-level citation networks from seed papers (DOIs or titles).
   Resolves seeds via Semantic Scholar, crawls references and citations to 2 levels,

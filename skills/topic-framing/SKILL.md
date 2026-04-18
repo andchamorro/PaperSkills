@@ -1,4 +1,5 @@
 ---
+name: topic-framing
 description: Converges a fuzzy academic idea into a concrete, researchable paper framing and title through a structured 6-step dialogue. Produces an HTML framing card by default (Markdown on explicit request). Use when the user has a vague research idea, wants to sharpen a title, or needs to test framing viability. Don't use for full literature review, detailed method design, manuscript drafting, or citation verification.
 ---
 

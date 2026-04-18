@@ -1,4 +1,5 @@
 ---
+name: paper-tracker
 description: >-
   Track newly published academic papers by author, institution, journal, venue,
   keyword, or domain within a specified time window. Produces a one-shot summary

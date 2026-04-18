@@ -1,4 +1,5 @@
 ---
+name: journal-match
 description: >-
   Recommend target journals for manuscript submission. Analyzes manuscript scope,
   discipline, methodology, and language, then searches for similar papers via

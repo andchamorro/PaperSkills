@@ -1,4 +1,5 @@
 ---
+name: peer-review
 description: >-
   Perform academic peer review with 8-criteria scoring (originality, argument,
   literature, discussion, consistency, methodology, presentation, evidence) and

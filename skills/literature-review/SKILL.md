@@ -1,4 +1,5 @@
 ---
+name: literature-review
 description: >-
   Execute hybrid literature search and draft Introduction/Related Work sections.
   Searches Semantic Scholar, OpenAlex, PubMed, and arXiv in parallel with

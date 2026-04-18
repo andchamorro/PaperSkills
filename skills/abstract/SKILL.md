@@ -1,4 +1,5 @@
 ---
+name: abstract
 description: >
   Generate structured and unstructured abstracts (IMRaD, thematic, extended,
   short, single-paragraph) for academic manuscripts in any discipline. Produces

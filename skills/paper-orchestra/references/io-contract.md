@@ -11,13 +11,14 @@ This document specifies the exact input format, desk layout, and output expectat
 The framework maps unconstrained pre-writing materials to a complete submission package:
 
 ```
-P = (P_tex, P_pdf) = W(I, E, T, G, F, R)
+P = (P_md, P_tex?, P_pdf?) = W(I, E, T, G, F, R)
 ```
 
 Where:
 - `W` = the PaperOrchestra framework
-- `P_tex` = the source LaTeX file
-- `P_pdf` = the rendered PDF (optional, depends on LaTeX toolchain availability)
+- `P_md` = the **canonical Markdown manuscript** (`desk/final/manuscript.md`)
+- `P_tex` = the exported LaTeX source, produced on demand by `scripts/export_latex.py` (pandoc)
+- `P_pdf` = the rendered PDF, produced on demand via `pandoc --pdf-engine=xelatex`
 
 ---
 
@@ -27,10 +28,11 @@ Where:
 |--------|------|----------|-------------|
 | `I` | `desk/inputs/idea.md` | **Yes** | Idea Summary - methodology, core contributions, theoretical foundation |
 | `E` | `desk/inputs/log.md` | **Yes** | Experimental Log - raw data, ablations, metrics |
-| `T` | `desk/inputs/tmpl.md` | **Yes** | LaTeX template from target conference |
+| `T` | `desk/inputs/tmpl.md` | **Yes** | **Markdown** section skeleton (pandoc-flavored) with `#`/`##` headings and an optional YAML front-matter block |
 | `G` | `desk/inputs/gl.md` | **Yes** | Conference guidelines (page limits, mandatory sections) |
 | `F` | `desk/inputs/fig/` | No | Optional pre-existing figures |
 | `R` | `desk/inputs/ref/` | No | Optional pre-existing references |
+| —   | `desk/inputs/tmpl.tex` | No | Optional pandoc LaTeX template used only by the export step; if absent, pandoc defaults are used |
 
 ---
 
@@ -88,7 +90,8 @@ desk/
 ├── inputs/                          # User-provided inputs
 │   ├── idea.md                      # I: Idea Summary (Sparse or Dense)
 │   ├── log.md                       # E: Experimental Log
-│   ├── tmpl.md                      # T: LaTeX template
+│   ├── tmpl.md                      # T: Markdown section skeleton
+│   ├── tmpl.tex                     # Optional: pandoc LaTeX template for export
 │   ├── gl.md                        # G: Conference guidelines
 │   ├── fig/                         # F: Optional pre-existing figures
 │   └── ref/                         # R: Optional pre-existing references
@@ -115,7 +118,9 @@ desk/
 │       └── manuscript.md
 │
 ├── final/                           # Accepted snapshot
-│   └── manuscript.md
+│   ├── manuscript.md                # Canonical Markdown artifact
+│   ├── manuscript.tex               # Optional LaTeX export (pandoc)
+│   └── manuscript.pdf               # Optional rendered PDF (pandoc)
 │
 └── provenance.json                  # Input/output hashes for reproducibility
 ```

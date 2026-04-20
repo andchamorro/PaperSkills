@@ -33,7 +33,7 @@ knowledge of the topic.
 
 1. `intro_related_work_plan`: Your PRIMARY guide for structure and arguments (from `ol.json`)
 2. `project_idea` and `project_experimental_log`: Use them to ensure the Intro accurately frames the technical contribution and results
-3. `template.tex`: The target structure to fill in
+3. `tmpl.md`: The target **Markdown** structure to fill in
 4. `cutoff_date`: Papers after this date are concurrent work, not prior art
 
 **When invoked standalone (as literature search):**
@@ -146,15 +146,17 @@ Create `refs.bib` with all verified citations:
 **Skip this phase in standalone mode.** In standalone mode, present results as
 a ranked markdown table and offer next actions (see Standalone Output below).
 
-Fill in the Introduction and Related Work sections of `template.tex`.
+Fill in the Introduction and Related Work sections of `tmpl.md`, writing in
+**pandoc-flavored Markdown**. Use pandoc citation syntax `[@Key]` / `[@Key1; @Key2]`
+(not `\cite{}`).
 
 **Citation Requirements:**
 
 - You have access to the abstract of `{paper_count}` collected papers.
 - You MUST cite at least `{min_cite_paper_count}` of them across the intro and related work.
 - **Introduction:** Cite key statistics, foundational models, and broad problem statements.
-- **Related Work:** Do deep comparative citations. Group distinct works (e.g., "Several methods [A, B, C]...").
-- Ensure every `\cite{key}` corresponds exactly to a key in the citation registry.
+- **Related Work:** Do deep comparative citations. Group distinct works (e.g., "Several methods [@KeyA; @KeyB; @KeyC]...").
+- Ensure every `[@key]` corresponds exactly to a key in the citation registry.
 
 **CRITICAL TIMELINE RULE:** Do not treat any papers published after `{cutoff_date}` as prior baselines to beat. Treat them strictly as concurrent work.
 
@@ -165,16 +167,24 @@ Fill in the Introduction and Related Work sections of `template.tex`.
 **Paper-orchestra mode:**
 
 1. **`desk/refs.bib`**: Complete BibTeX file with all verified citations
-2. **`desk/drafts/intro.md`**: The completed LaTeX for Introduction and Related Work sections
+2. **`desk/drafts/intro.md`**: The Markdown for the Introduction and Related Work sections, ready to splice into `tmpl.md`.
 
-The output must be the full code for the new `template.tex`, where the two
-empty sections are now filled in, while all other code is identical to the
-original `template.tex`.
+The output must be the full Markdown for the two sections (Introduction and
+Related Work) with pandoc `[@key]` citations, so that a downstream step can
+concatenate it into the manuscript skeleton without further transformation.
 
 **Output Format:**
-```latex
-% Full template.tex with Introduction and Related Work filled in
-```
+
+````markdown
+# Introduction
+
+...text with [@Key] citations...
+
+# Related Work
+
+## 2.1 ...
+...
+````
 
 **Standalone mode:**
 
@@ -194,8 +204,7 @@ Then offer next actions:
 ## Important Notes
 
 - YOU MUST ONLY CITE THE VERIFIED PAPERS in the citation registry. DO NOT cite new papers other than the verified ones.
-- DO NOT change `\usepackage[capitalize]{cleveref}` into `\usepackage[capitalize]{cleverref}`.
-- Return the full code for the updated `template.tex`.
+- Return the full Markdown for the Introduction and Related Work sections; do not wrap them in LaTeX preamble.
 
 ## API Reference
 
@@ -205,7 +214,7 @@ deduplication logic, see `references/api-reference.md`.
 ## Validation
 
 After generation:
-1. All `\cite{key}` commands must have matching entries in `refs.bib`
+1. All `[@key]` (and any legacy `\cite{key}`) references must have matching entries in `refs.bib`
 2. No papers cited after `cutoff_date` as prior art
 3. Minimum citation count met
 4. Introduction and Related Work sections are non-empty

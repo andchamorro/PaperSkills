@@ -21,7 +21,7 @@ You will receive:
 
 1. `idea.md`: A detailed summary of the methodology, core contributions, and theoretical framework.
 2. `experimental_log.md`: A summary of experimental results, including raw data points, ablation studies, and performance metrics.
-3. `template.tex`: The target structure. You must use the section commands (e.g., `\section{...}`) found here as your primary skeleton.
+3. `tmpl.md`: The target structure. You must use the Markdown headings (`#`, `##`) found here as your primary skeleton. Section titles in `ol.json` should match or align with those headings. (If a legacy LaTeX template `tmpl.tex` is provided, treat it as style guidance for the optional export only — not as the section skeleton.)
 4. `conference_guidelines.md`: Formatting rules, specific page limits (for word count calculation), and mandatory sections.
 
 ## Processing Directives

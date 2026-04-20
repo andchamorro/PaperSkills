@@ -14,7 +14,7 @@ from pathlib import Path
 REQUIRED_FILES = [
     ("inputs/idea.md", "Idea Summary (I)"),
     ("inputs/log.md", "Experimental Log (E)"),
-    ("inputs/tmpl.md", "LaTeX Template (T)"),
+    ("inputs/tmpl.md", "Markdown Template (T)"),
     ("inputs/gl.md", "Conference Guidelines (G)"),
 ]
 
@@ -66,37 +66,29 @@ def check_file_content(desk: Path, rel_path: str, min_length: int) -> tuple[bool
 
 
 def check_template_structure(desk: Path) -> tuple[bool, str]:
-    """Check that the LaTeX template has expected section commands."""
+    """Check that the Markdown template has enough top-level section headings."""
     path = desk / "inputs/tmpl.md"
     if not path.exists():
         return False, "Cannot validate template structure: tmpl.md missing"
 
     content = path.read_text()
 
-    # Check for basic LaTeX structure
-    required_patterns = [
-        ("\\documentclass", "documentclass declaration"),
-        ("\\begin{document}", "document begin"),
-        ("\\end{document}", "document end"),
-    ]
+    import re
 
-    missing = []
-    for pattern, desc in required_patterns:
-        if pattern not in content:
-            missing.append(desc)
+    # Count Markdown ATX headings at depth 1 or 2 (ignore YAML front-matter and
+    # fenced code blocks by stripping them out first).
+    stripped = re.sub(r"^---\n.*?\n---\n", "", content, count=1, flags=re.DOTALL)
+    stripped = re.sub(r"```.*?```", "", stripped, flags=re.DOTALL)
 
-    if missing:
-        return False, f"Template missing: {', '.join(missing)}"
-
-    # Check for section commands
-    section_count = content.count("\\section{")
+    section_count = len(re.findall(r"(?m)^#{1,2}\s+\S", stripped))
     if section_count < 3:
         return (
             False,
-            f"Template has only {section_count} sections (expected at least 3)",
+            f"Template has only {section_count} Markdown section heading(s) "
+            f"(expected at least 3 '#'/'##' headings)",
         )
 
-    return True, f"Template structure OK ({section_count} sections found)"
+    return True, f"Template structure OK ({section_count} Markdown sections found)"
 
 
 def check_log_has_data(desk: Path) -> tuple[bool, str]:

@@ -59,7 +59,8 @@
                                    ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           OUTPUTS                                        │
-│           final/manuscript.md  │  provenance.json                        │
+│  final/manuscript.md (canonical)  │  final/manuscript.tex? (pandoc)       │
+│  provenance.json                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -74,6 +75,7 @@
 | 3 | Literature Review Agent | ~20-30 | Parallel candidate discovery (10 workers), sequential citation verification (1 QPS) |
 | 4 | Section Writing Agent | **1** | Single comprehensive multimodal call |
 | 5 | Content Refinement Agent | ~5-7 | Score-driven iterative revision (max 3 iterations × 2-3 calls each) |
+| 6 | LaTeX Export (pandoc) | 0 | Optional: Markdown → `.tex`/`.pdf` only if requested |
 | **Total** | | **~60-70** | Mean latency: 39.6 minutes |
 
 ---
@@ -153,17 +155,18 @@ Hybrid discovery pipeline:
 **Single call** that receives:
 - Complete outline (`ol.json`)
 - Source materials (`idea.md`, `log.md`)
-- Pre-written sections (`intro.md`)
+- Pre-written sections (`intro.md`, Markdown)
 - Citation map (`refs.bib`)
 - Conference guidelines (`gl.md`)
 - Generated figures (multimodal input)
 
 **Critical Rules:**
+- Output is **pandoc-flavored Markdown** (`drafts/manuscript.md`)
 - Preserve existing content (Introduction, Related Work)
 - Extract numeric data directly from log (no hallucination)
-- Use exact citation keys from citation map
-- Include ALL provided figures
-- Match LaTeX style of template
+- Use exact citation keys from citation map via `[@key]` syntax
+- Include ALL provided figures with `![caption](fig/<id>.png){#fig:<id>}`
+- Match the heading structure of `tmpl.md`
 
 ### Step 5: Content Refinement
 
@@ -178,7 +181,17 @@ Uses AgentReview (Jin et al., 2024) as the default reviewer system.
 6. Accept or revert based on score delta
 
 **Critical Rules:**
+- Operate directly on the Markdown manuscript — never convert to LaTeX mid-loop
 - Ignore requests for new experiments (not in experimental_log)
 - Never explicitly state limitations (prevents reward hacking)
 - All numerical claims must match experimental_log
 - Use only citations from citation_map.json
+
+### Step 6: LaTeX Export (optional, pandoc)
+
+Produced only if the user asks for a `.tex` or `.pdf`:
+
+- `scripts/export_latex.py --desk desk/` converts `final/manuscript.md` → `final/manuscript.tex`.
+- If `desk/inputs/tmpl.tex` exists, it is passed to pandoc via `--template`; otherwise pandoc defaults apply.
+- If pandoc is missing, the script prints a clear error and exits non-zero — the Markdown manuscript remains the authoritative artifact.
+- Add `--pdf` to additionally build a PDF; missing LaTeX engines degrade gracefully.

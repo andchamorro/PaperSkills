@@ -15,7 +15,7 @@ DESK_STRUCTURE = {
     "inputs": {
         "idea.md": "# Idea Summary\n\n<!-- Write your methodology, core contributions, and theoretical foundation here -->\n\n## Problem Statement\n\n\n## Core Hypothesis\n\n\n## Proposed Methodology\n\n\n## Expected Contribution\n\n",
         "log.md": "# Experimental Log\n\n<!-- Document your experimental setup, raw data, and qualitative observations here -->\n\n## 1. Experimental Setup\n\n### Datasets\n\n\n### Evaluation Metrics\n\n\n### Baselines Compared\n\n\n### Implementation Details\n\n\n## 2. Raw Numeric Data\n\n<!-- Include tables with exact values -->\n\n\n## 3. Qualitative Observations\n\n",
-        "tmpl.md": "% LaTeX Template\n% Replace this with your conference's official template\n\n\\documentclass{article}\n\n\\begin{document}\n\n\\title{Your Paper Title}\n\n\\maketitle\n\n\\begin{abstract}\n\\end{abstract}\n\n\\section{Introduction}\n\n\\section{Related Work}\n\n\\section{Method}\n\n\\section{Experiments}\n\n\\section{Conclusion}\n\n\\end{document}\n",
+        "tmpl.md": '---\ntitle: "Your Paper Title"\nauthor:\n  - Anonymous Author(s)\nbibliography: ../refs.bib\n# Uncomment to drive the optional LaTeX export:\n# documentclass: article\n# classoption: [11pt]\n---\n\n<!--\nMarkdown manuscript template. Replace the sections below to match your target\nvenue. This file is the canonical manuscript source; LaTeX is produced later\nby `scripts/export_latex.py` (pandoc). If you need a specific LaTeX class or\npreamble, drop a pandoc template at `desk/inputs/tmpl.tex`.\n-->\n\n# Abstract\n\n\n# Introduction\n\n\n# Related Work\n\n\n# Method\n\n\n# Experiments\n\n\n# Conclusion\n\n\n# References\n',
         "gl.md": "# Conference Guidelines\n\n<!-- Specify formatting rules and requirements -->\n\n## Page Limit\n\n\n## Formatting Requirements\n\n\n## Mandatory Sections\n\n\n## Submission Requirements\n\n",
         "fig": None,  # Directory
         "ref": None,  # Directory
@@ -177,9 +177,10 @@ def main():
     print("\nNext steps:")
     print(f"  1. Edit {base_path}/inputs/idea.md with your methodology")
     print(f"  2. Edit {base_path}/inputs/log.md with your experimental results")
-    print(f"  3. Replace {base_path}/inputs/tmpl.md with your conference template")
+    print(f"  3. Adjust {base_path}/inputs/tmpl.md (Markdown section skeleton)")
     print(f"  4. Edit {base_path}/inputs/gl.md with conference guidelines")
-    print(f"  5. Run: python scripts/validate.py --desk {base_path}")
+    print(f"  5. (Optional) Drop a pandoc LaTeX template at {base_path}/inputs/tmpl.tex")
+    print(f"  6. Run: python scripts/validate.py --desk {base_path}")
 
 
 if __name__ == "__main__":

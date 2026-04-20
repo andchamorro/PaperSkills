@@ -46,13 +46,39 @@ from pathlib import Path
 
 
 def extract_citations_from_tex(content: str) -> set[str]:
-    """Extract all citation keys from LaTeX/Markdown content."""
-    cite_pattern = r"\\cite[pt]?\{([^}]+)\}"
-    citations = set()
-    for match in re.finditer(cite_pattern, content):
-        keys = match.group(1).split(",")
-        for key in keys:
-            citations.add(key.strip())
+    """Extract citation keys from a manuscript (pandoc Markdown or LaTeX).
+
+    Recognizes:
+    - LaTeX: ``\\cite{key}``, ``\\citep{key1,key2}``, ``\\citet{...}``
+    - Pandoc Markdown: ``[@key]``, ``[@key1; @key2, p. 3]``, ``@key`` (inline)
+
+    Crossref-style keys ``fig:id`` / ``tbl:id`` / ``sec:id`` / ``eq:id`` are
+    ignored — they are not bibliography references.
+    """
+    citations: set[str] = set()
+
+    # LaTeX-style
+    for match in re.finditer(r"\\cite[pt]?\*?\{([^}]+)\}", content):
+        for key in match.group(1).split(","):
+            key = key.strip()
+            if key:
+                citations.add(key)
+
+    # Pandoc bracketed citations: [@key], [-@key], [@key, p. 3; @key2]
+    for match in re.finditer(r"\[([^\]]*@[^\]]+)\]", content):
+        inner = match.group(1)
+        for token in re.findall(r"-?@([A-Za-z0-9_:\-\./]+)", inner):
+            if ":" in token and token.split(":", 1)[0] in {"fig", "tbl", "sec", "eq"}:
+                continue
+            citations.add(token)
+
+    # Pandoc inline citations: `@key` not preceded by `[` or `\`
+    for match in re.finditer(r"(?<![\[\\\w])@([A-Za-z][A-Za-z0-9_\-\.]*)", content):
+        token = match.group(1)
+        if ":" in token and token.split(":", 1)[0] in {"fig", "tbl", "sec", "eq"}:
+            continue
+        citations.add(token)
+
     return citations
 
 
@@ -98,11 +124,20 @@ def orphan_check(manuscript: Path, bibtex: Path, strict: bool = False) -> tuple[
 
         messages.append("\nOrphan locations:")
         for key in sorted(orphans):
-            pattern = rf"\\cite[pt]?\{{[^}}]*{re.escape(key)}[^}}]*\}}"
-            for match in re.finditer(pattern, tex_content):
-                line_num = tex_content[: match.start()].count("\n") + 1
-                messages.append(f"  - {key}: line {line_num}")
-                break
+            esc = re.escape(key)
+            patterns = [
+                rf"\\cite[pt]?\*?\{{[^}}]*{esc}[^}}]*\}}",
+                rf"@{esc}\b",
+            ]
+            found = False
+            for pattern in patterns:
+                for match in re.finditer(pattern, tex_content):
+                    line_num = tex_content[: match.start()].count("\n") + 1
+                    messages.append(f"  - {key}: line {line_num}")
+                    found = True
+                    break
+                if found:
+                    break
 
     if unused and strict:
         messages.append(f"\n⚠ Found {len(unused)} unused citation(s) (in refs.bib but not cited):")
@@ -381,6 +416,25 @@ def smoke_test() -> bool:
         passed += 1
     else:
         print(f"FAIL: expected orphan 'ghost2025': {msgs}", file=sys.stderr)
+        failed += 1
+
+    # Test 2b: pandoc-style [@key] orphan-check
+    print("  Test 2b: orphan-check (pandoc [@key])...", file=sys.stderr, end=" ")
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+        f.write("We follow [@smith2024; @jones2023] and @smith2024 again.\n")
+        md_path = f.name
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".bib", delete=False) as f:
+        f.write("@article{smith2024, title={Foo}, author={Smith}}\n")
+        f.write("@article{jones2023, title={Bar}, author={Jones}}\n")
+        bib_path = f.name
+    ok, msgs = orphan_check(Path(md_path), Path(bib_path))
+    os.unlink(md_path)
+    os.unlink(bib_path)
+    if ok:
+        print("PASS", file=sys.stderr)
+        passed += 1
+    else:
+        print(f"FAIL: {msgs}", file=sys.stderr)
         failed += 1
 
     # Test 3: DOI normalization

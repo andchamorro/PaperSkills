@@ -219,6 +219,14 @@ Summarize:
 
 Mean latency: 39.6 minutes (from manuscript benchmarks)
 
+## Security
+scripts/export_latex.py integrates pandoc via subprocess under strict Socket.dev compliance:
+
+* Injection Prevention: Mandates shell=False and explicit argument lists; execution is locked to the fixed "pandoc" binary.
+* Path Sandboxing: All I/O paths (input, output, templates, bib) are resolved and strictly validated against the base directory; violations trigger immediate ValueError.
+* Extension Lockdown: Hard whitelisting limits processing to .md, .tex, .pdf, and .bib files.
+* Automated Audit: Compliance is enforced by tests/test_socket_security.py using pytest.
+
 ## Resources
 
 - `references/io-contract.md` — Input formats and desk layout
@@ -231,7 +239,7 @@ Mean latency: 39.6 minutes (from manuscript benchmarks)
 - `scripts/citation_tool.py` — Unified citation tool (orphan-check, verify, smoke-test); understands pandoc `[@key]` and `\cite{key}`
 - `scripts/markdown_sanity.py` — Validate Markdown manuscript structure
 - `scripts/latex_sanity.py` — Validate LaTeX structure (run only against exported `.tex`)
-- `scripts/export_latex.py` — Pandoc-based Markdown → LaTeX/PDF exporter
+- `scripts/export_latex.py` — Pandoc-based Markdown → LaTeX/PDF exporter (hardened; see Security section)
 - `scripts/snapshot.py` — Create provenance snapshot
 
 ## Sub-Skills

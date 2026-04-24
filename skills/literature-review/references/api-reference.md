@@ -1,139 +1,171 @@
 # Literature Search API Reference
 
-Detailed API endpoints and parameters for the lit-search skill.
+This document describes the literature_scripts Python backend that powers the
+literature-review skill.
 
-## Semantic Scholar API
+## Scripts Overview
 
-**Base URL:** `https://api.semanticscholar.org/graph/v1`
+| Script | Purpose | Coverage | API Key Required |
+|--------|---------|----------|----------|-----------------|
+| `search_openalex.py` | OpenAlex search | Broad academic | No |
+| `search_crossref.py` | CrossRef search | DOI lookup, BibTeX | No |
+| `download_arxiv_source.py` | arXiv source | STEM preprints | No |
 
-### Paper Search
+## search_openalex.py
 
-```
-GET /paper/search?query={query}&limit={limit}&fields={fields}
-```
+Self-contained: stdlib only (urllib, json). No external dependencies.
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| query | string | required | Search query |
-| limit | int | 10 | Max results (max 100) |
-| fields | string | title,authors | Comma-separated: title,authors,year,venue,citationCount,abstract,externalIds,openAccessPdf |
+### Usage
 
-**Example:**
-```
-https://api.semanticscholar.org/graph/v1/paper/search?query=machine%20learning&limit=20&fields=title,authors,year,venue,citationCount,abstract,externalIds,openAccessPdf
-```
-
-**Rate Limit:** 1 request/second (100 requests/day without key)
-
-### Paper Details
-
-```
-GET /paper/{paperId}?fields={fields}
+```bash
+python skills/literature-review/scripts/search_openalex.py \
+  --query "QUERY" \
+  --max-results 20 \
+  --year-range 2020-2026 \
+  --min-citations 5 \
+  --sort cited_by_count:desc \
+  -o results.jsonl
 ```
 
-**paperId** can be DOI (e.g., `10.1038/nature14539`), arXiv ID, or Semantic Scholar paper ID.
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--query` | string | required | Search keywords |
+| `--max-results` | int | 50 | Max papers to return |
+| `--year-range` | string | None | Year filter (e.g. 2020-2026) |
+| `--min-citations` | int | 0 | Minimum citation count |
+| `--type` | string | None | Work type (article, proceedings-article) |
+| `--sort` | string | cited_by_count:desc | Sort order |
+| `-o`, `--output` | string | stdout | Output file |
+
+### Output Format (JSONL)
+
+```json
+{
+  "openalex_id": "https://openalex.org/W123456",
+  "doi": "10.1234/abc",
+  "arxiv_id": "",
+  "title": "Paper Title",
+  "authors": ["Author One", "Author Two"],
+  "abstract": "Paper abstract...",
+  "year": 2023,
+  "venue": "Conference Name",
+  "citationCount": 1234,
+  "pdf_url": "https://...",
+  "source": "openalex"
+}
+```
+
+### Rate Limit
+
+OpenAlex allows 100,000 requests/day with email (handled internally).
 
 ---
 
-## OpenAlex API
+## search_crossref.py
 
-**Base URL:** `https://api.openalex.org`
+Self-contained: stdlib only (urllib, json, unicodedata). No external dependencies.
 
-### Work Search
+### Usage
 
-```
-GET /works?search={query}&per_page={per_page}&sort={sort}&mailto={email}
-```
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| search | string | required | Search query |
-| per_page | int | 25 | Results per page (max 200) |
-| sort | string | cited_by_count:desc | Sort field |
-| mailto | string | required | Contact email (rate limit etiquette) |
-
-**Example:**
-```
-https://api.openalex.org/works?search=machine%20learning&per_page=20&sort=cited_by_count:desc&mailto=paperskills@example.com
+```bash
+python skills/literature-review/scripts/search_crossref.py \
+  --query "QUERY" \
+  --rows 20 \
+  --bibtex \
+  -o refs.bib
 ```
 
-**Rate Limit:** 100,000 requests/day (requires email)
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--query` | string | required | Search keywords |
+| `--rows` | int | 10 | Number of results |
+| `--bibtex` | flag | False | Output BibTeX format |
+| `-o`, `--output` | string | stdout | Output file |
+| `--timeout` | int | 30 | Request timeout (seconds) |
+
+### Output Formats
+
+**JSONL (default):**
+```json
+{
+  "title": "Paper Title",
+  "authors": "Author One and Author Two",
+  "year": "2023",
+  "journal": "Journal Name",
+  "doi": "10.1234/abc",
+  "type": "article",
+  "cited_by": 123,
+  "bibtex_key": "Author2023paper"
+}
+```
+
+**BibTeX (with --bibtex flag):**
+```bibtex
+@article{Author2023paper,
+  title = {Paper Title},
+  author = {Author One and Author Two},
+  journal = {Journal Name},
+  year = {2023},
+  doi = {10.1234/abc}
+}
+```
+
+### Rate Limit
+
+CrossRef allows ~50 req/s (handled internally with retry logic).
 
 ---
 
-## PubMed API (NCBI)
+## download_arxiv_source.py
 
-**Base URL:** `https://eutils.ncbi.nlm.nih.gov/entrez/eutils`
+Self-contained: stdlib only (urllib, xml.etree, tarfile, tempfile).
 
-### Search
+### Usage
 
-```
-GET /esearch.fcgi?db=pubmed&term={query}&retmax={retmax}&retmode=json
-```
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| db | string | pubmed | Database |
-| term | string | required | Search query |
-| retmax | int | 20 | Max results |
-| retmode | string | json | Response format |
-
-**Example:**
-```
-https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=cancer%20immunotherapy&retmax=20&retmode=json
+```bash
+python skills/literature-review/scripts/download_arxiv_source.py \
+  --title "Attention Is All You Need" \
+  --max-results 3 \
+  --output-dir arxiv_papers/
 ```
 
-### Summary
-
-```
-GET /esummary.fcgi?db=pubmed&id={pmids}&retmode=json
-```
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| db | string | pubmed | Database |
-| id | string | required | Comma-separated PMIDs |
-| retmode | string | json | Response format |
-
-**Example:**
-```
-https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=34567890,34567891&retmode=json
-```
-
-**Rate Limit:** 3 requests/second (合理使用)
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--title` | string | None | Paper title to search |
+| `--arxiv-id` | string | None | Direct arXiv ID |
+| `--max-results` | int | 5 | Max search results |
+| `--output-dir` | string | arxiv_papers/ | Output directory |
+| `--metadata` | flag | False | Also save metadata JSON |
 
 ---
 
-## arXiv API
+## Security Patterns
 
-**Base URL:** `https://export.arxiv.org/api/query`
+### Stdlib-Only Networking
 
-### Search
+All scripts use only:
+- `urllib.request` — stdlib HTTP client
+- `urllib.parse` — URL encoding
+- No `socket` module directly
+- No custom network handling
+- No raw socket creation
 
-```
-GET /query?search_query=all:{query}&max_results={max_results}&sortBy={sortBy}
-```
+### Request Headers
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| search_query | string | required | Search query (prefix with `all:` for general search) |
-| max_results | int | 10 | Max results |
-| sortBy | string | relevance | Options: relevance, lastUpdatedDate, submittedDate |
-
-**Example:**
-```
-https://export.arxiv.org/api/query?search_query=all:transformer&max_results=20&sortBy=relevance
+```python
+HEADERS = {
+    "User-Agent": "SkillScript/1.0 (mailto:user@example.com)"
+}
 ```
 
-**Response Format:** Atom XML — parse `<entry>` elements for:
-- `id` (arXiv URL)
-- `title`
-- `summary` (abstract)
-- `author` (name)
-- `published` (date)
-- `arxiv:category` (subject)
+Always include User-Agent for rate limit etiquette.
 
-**Rate Limit:** 1 request/3 seconds
+### Error Handling
+
+Scripts implement:
+- Retry logic with exponential backoff
+- Timeout handling (default 30s)
+- Graceful degradation on network errors
 
 ---
 
@@ -143,98 +175,44 @@ https://export.arxiv.org/api/query?search_query=all:transformer&max_results=20&s
 
 ```python
 def normalize_doi(doi):
-    if not doi:
-        return None
     doi = doi.lower().strip()
-    # Strip URL prefix
-    for prefix in ['https://doi.org/', 'http://doi.org/', 'doi:']:
+    for prefix in ["https://doi.org/", "http://doi.org/", "doi:"]:
         if doi.startswith(prefix):
             doi = doi[len(prefix):]
-    return doi if doi.startswith('10.') else None
+    return doi
 ```
 
-### Deduplication Logic
+### Deduplication
 
-```
 1. Extract all DOIs from results
 2. Normalize to lowercase, strip prefixes
-3. Group by DOI → keep richest metadata record
+3. Group by DOI → keep richest metadata
 4. For papers without DOI:
    - Tokenize title, remove stopwords
-   - Compare with Levenshtein similarity > 80%
-   - Group similar titles, keep highest-cited
-```
+   - Compare with >80% token overlap
+   - Keep highest-cited variant
 
 ---
 
-## Response Parsing
+## Merging Results
 
-### Semantic Scholar JSON
+When using multiple scripts, merge with DOI-based deduplication:
 
-```json
-{
-  "data": [
-    {
-      "paperId": "...",
-      "title": "...",
-      "authors": [{"name": "..."}],
-      "year": 2023,
-      "venue": "...",
-      "citationCount": 1234,
-      "abstract": "...",
-      "externalIds": {"DOI": "10.xxx/yyy"},
-      "openAccessPdf": {"url": "..."}
-    }
-  ]
-}
-```
-
-### OpenAlex JSON
-
-```json
-{
-  "results": [
-    {
-      "id": "https://openalex.org/W123456",
-      "doi": "10.xxx/yyy",
-      "title": "...",
-      "publication_year": 2023,
-      "cited_by_count": 1234,
-      "authorships": [{"author": {"display_name": "..."}}],
-      "primary_location": {"source": {"display_name": "..."}}
-    }
-  ]
-}
-```
-
-### PubMed JSON (esummary)
-
-```json
-{
-  "result": {
-    "uids": ["12345"],
-    "12345": {
-      "uid": "12345",
-      "title": "...",
-      "pubdate": "2023",
-      "authors": [{"name": "..."}],
-      "source": "..."
-    }
-  }
-}
-```
-
-### arXiv XML
-
-```xml
-<feed>
-  <entry>
-    <id>http://arxiv.org/abs/2301.12345</id>
-    <title>...</title>
-    <summary>...</summary>
-    <author><name>...</name></author>
-    <published>2023-01-15T00:00:00Z</published>
-    <category term="cs.LG"/>
-  </entry>
-</feed>
+```python
+def merge_results(openalex_results, crossref_results):
+    merged = {}
+    for r in openalex_results:
+        doi = r.get("doi", "").lower()
+        if doi and doi not in merged:
+            merged[doi] = r
+    for r in crossref_results:
+        doi = r.get("doi", "").lower()
+        if doi:
+            if doi in merged:
+                # Keep richer metadata
+                if r.get("type") == "article":
+                    merged[doi] = r
+            else:
+                merged[doi] = r
+    return list(merged.values())
 ```

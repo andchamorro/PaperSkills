@@ -2,20 +2,21 @@
 name: literature-review
 description: >-
   Execute hybrid literature search and draft Introduction/Related Work sections.
-  Searches Semantic Scholar, OpenAlex, PubMed, and arXiv in parallel with
-  DOI-based deduplication, citation-count ranking, and open-access detection.
-  Builds a verified citation registry and drafts literature-grounded LaTeX
-  sections. Use when running Step 3 of paper-orchestra, or standalone when the
-  user asks to "search for papers", "find academic literature", "literature
-  review", "citation search", or "related work writing". Do NOT use for
-  citation verification (use citation_tool.py), citation networks
-  (use connected-citations), or journal matching (use journal-match).
+  Uses literature_scripts Python backend for querying academic databases
+  (CrossRef, OpenAlex, arXiv), with DOI-based deduplication, citation-count
+  ranking, and open-access detection. Builds a verified citation registry and
+  drafts literature-grounded LaTeX sections. Use when running Step 3 of
+  paper-orchestra, or standalone when the user asks to "search for papers",
+  "find academic literature", "literature review", "citation search", or
+  "related work writing". Do NOT use for citation verification (use
+  citation_tool.py), citation networks (use connected-citations), or journal
+  matching (use journal-match).
 ---
 
 # Literature Review Agent
 
-> **Source**: Song et al. (2026), PaperOrchestra, Appendix B — extended with
-> multi-API parallel search from the former `lit-search` skill.
+> **Source**: Song et al. (2026), PaperOrchestra, Appendix B — updated to use
+> literature_scripts Python backend for secure, reliable querying.
 
 ## Role
 
@@ -45,11 +46,10 @@ knowledge of the topic.
 
 ## Process Overview
 
-### Phase 1: Parallel Multi-API Candidate Discovery
+### Phase 1: Script-Based Candidate Discovery
 
-Execute search across multiple APIs using **parallel WebFetch calls** with
-concurrency limits. This replaces the former sequential Semantic-Scholar-only
-approach with the multi-API pattern from `lit-search`.
+Execute search using **literature_scripts Python backend**. This replaces direct
+API calls with secure, stdlib-based script invocations.
 
 #### 1a. Generate Search Queries
 
@@ -62,31 +62,33 @@ From the outline's search directions (paper-orchestra) or the user query
 - More specific sub-topic
 - Methodology-focused variant (if applicable)
 
-#### 1b. Detect Discipline → Select APIs
+#### 1b. Detect Discipline → Select Scripts
 
-| Signal | APIs to include |
+| Signal | Scripts to include |
 |--------|----------------|
-| Medical / biomedical terms | Semantic Scholar + OpenAlex + **PubMed** |
-| CS / math / physics terms | Semantic Scholar + OpenAlex + **arXiv** |
-| Social sciences / humanities | Semantic Scholar + OpenAlex |
-| Unclear / mixed | Semantic Scholar + OpenAlex (always) |
+| Medical / biomedical terms | **search_crossref.py** + **search_openalex.py** |
+| CS / math / physics terms | **search_crossref.py** + **search_openalex.py** + **search_arxiv** (via OpenAlex) |
+| Social sciences / humanities | **search_crossref.py** + **search_openalex.py** |
+| Unclear / mixed | **search_crossref.py** + **search_openalex.py** (always) |
 
-#### 1c. Parallel WebFetch Calls
+#### 1c. Script Execution Pattern
 
-Fire all API calls concurrently. Respect per-API rate limits:
+**Secure subprocess invocation using stdlib-based scripts:**
 
-| API | Endpoint | Rate Limit | Concurrency |
-|-----|----------|------------|-------------|
-| **Semantic Scholar** | `GET https://api.semanticscholar.org/graph/v1/paper/search?query={q}&limit=20&fields=paperId,title,authors,year,venue,citationCount,abstract,externalIds,openAccessPdf` | 1 req/s | Serial |
-| **OpenAlex** | `GET https://api.openalex.org/works?search={q}&per_page=20&sort=cited_by_count:desc&mailto=paperskills@example.com` | 10 req/s | Parallel OK |
-| **PubMed** (if biomedical) | `GET https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={q}&retmax=20&retmode=json` then `GET /esummary.fcgi?db=pubmed&id={pmids}&retmode=json` | 3 req/s | Parallel OK |
-| **arXiv** (if STEM) | `GET https://export.arxiv.org/api/query?search_query=all:{q}&max_results=20&sortBy=relevance` | 1 req/3s | Serial |
+```
+python skills/literature-review/scripts/search_openalex.py --query "QUERY" --max-results 20 --year-range 2020-2026 -o openalex_results.jsonl
+python skills/literature-review/scripts/search_crossref.py --query "QUERY" --rows 20 -o crossref_results.jsonl
+```
+
+| Script | Flags | Rate Limit | Output |
+|--------|-------|-----------|--------|
+| **search_openalex.py** | `--query`, `--max-results`, `--year-range`, `--min-citations`, `--sort` | 100K/day | JSONL |
+| **search_crossref.py** | `--query`, `--rows`, `--bibtex`, `--output` | 50 req/s | JSONL or .bib |
 
 **Implementation pattern:**
-- Group Semantic Scholar calls sequentially (1 QPS strict).
-- Fire OpenAlex + PubMed + arXiv calls in parallel per query variant.
-- On 429 (rate limit): back off 5s, retry once; if still failing, skip that API for the current query and note the gap.
-- On timeout or error: skip that API call, continue with others.
+- Execute scripts sequentially with proper rate limiting (scripts handle internally)
+- On script error: log and continue with remaining scripts
+- Parse JSONL output for results
 
 #### 1d. Merge and Deduplicate
 
@@ -110,27 +112,25 @@ For standalone mode:
 - Introduction: 10-20 papers
 - Related Work: 30-50 papers
 
-### Phase 2: Sequential Citation Verification
+### Phase 2: Citation Verification via Script
 
-Process top candidates through Semantic Scholar at **1 query per second**:
+Process top candidates using script-based lookup:
 
-1. For each candidate:
-   - Query Semantic Scholar for exact match (by DOI if available, else title)
-   - If found:
-     - Verify publication date against `cutoff_date` (paper-orchestra only)
-     - Fetch abstract and full metadata
-     - Record Semantic Scholar ID for final deduplication
-   - If not found or after cutoff:
-     - Discard candidate
-2. Final deduplication by Semantic Scholar ID
-3. Build citation registry with:
+1. For each candidate with DOI:
+   - Query CrossRef for exact match and full metadata
+   - Verify publication date against `cutoff_date` (paper-orchestra only)
+   - Fetch abstract and full metadata
+2. For papers without DOI:
+   - Use OpenAlex to resolve by title
+3. Final deduplication by DOI or Semantic Scholar ID
+4. Build citation registry with:
    - BibTeX key (auto-generated: `AuthorYYYYKeyword`)
-   - Full BibTeX entry
+   - Full BibTeX entry (via `--bibtex` flag)
    - Abstract (for writing context)
 
 ### Phase 3: Generate BibTeX File
 
-Create `refs.bib` with all verified citations:
+Use CrossRef script with `--bibtex` flag to generate `refs.bib`:
 
 ```bibtex
 @inproceedings{AuthorYYYYKeyword,
@@ -188,7 +188,7 @@ Return a markdown table:
 ```
 
 Then offer next actions:
-1. "Build a citation network?" → `/connected-citations DOI1 DOI2`
+1. "Build a citation network?" �� `/connected-citations DOI1 DOI2`
 2. "Find research gaps?" → `/research-gap {topic}`
 3. "Save results to BibTeX?"
 
@@ -198,10 +198,13 @@ Then offer next actions:
 - DO NOT change `\usepackage[capitalize]{cleveref}` into `\usepackage[capitalize]{cleverref}`.
 - Return the full code for the updated `template.tex`.
 
-## API Reference
+## Script Reference
 
-For detailed endpoint documentation, response formats, DOI normalization, and
-deduplication logic, see `references/api-reference.md`.
+| Script | Purpose | Key Flags |
+|--------|---------|-----------|
+| `scripts/search_openalex.py` | Search OpenAlex (broad coverage, free) | `--query`, `--max-results`, `--year-range`, `--min-citations`, `--sort`, `-o` |
+| `scripts/search_crossref.py` | Search CrossRef (DOI lookup, BibTeX) | `--query`, `--rows`, `--bibtex`, `--output`, `-o` |
+| `scripts/download_arxiv_source.py` | Download arXiv source | `--title`, `--arxiv-id`, `--max-results`, `--output-dir` |
 
 ## Validation
 
@@ -215,12 +218,11 @@ After generation:
 
 | Error | Handling |
 |-------|----------|
-| 429 rate limit | Back off 5s, retry once. If persistent, skip API and note gap |
-| 0 results on all APIs | Suggest broader search terms |
+| Script timeout | Increase timeout, retry once. If persistent, skip script |
+| 0 results from all scripts | Suggest broader search terms |
+| Script parse error | Log error, continue with remaining scripts |
 | Non-Latin script query | Try transliterated version alongside original |
-| arXiv XML parse error | Skip arXiv results, note in output |
-| API timeout | Skip that call, continue with remaining APIs |
-| PubMed returns PMIDs but esummary fails | Keep PMIDs, mark metadata as partial |
+| BibTeX key collision | Auto-suffix with letters (a, b, c...) |
 
 ## Token Budget
 
